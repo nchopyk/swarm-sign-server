@@ -61,10 +61,6 @@ const responsesSchemas = {
     200: usersDTOs.leaveOrganizationResponseDTO,
   },
 
-  getAllInvitationsToOrganizationsWithPagination: {
-    200: usersDTOs.userInvitationsToOrganizationsCollectionDTO,
-  },
-
   acceptInvitationToOrganization: {
     200: usersDTOs.acceptInvitationToOrganizationResponseDTO
   },

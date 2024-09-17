@@ -7,7 +7,6 @@ import {
   OrganizationModel,
   OrganizationName,
 } from '../../organizations/service/organizations.types';
-import { InvitationId, InvitationAcceptedAt, InvitationRejectedAt } from '../../organizations-members/service/organizations-members.types';
 import { TokenPayload } from '../../general/general.types';
 
 export type UserId = string;
@@ -140,31 +139,6 @@ export type UserTokens = {
   refreshToken: string;
 }
 /* --------------------- User Tokens Model --------------------- */
-
-
-/* --------------------- User Organization Invitation Model --------------------- */
-export interface UserOrganizationInvitationModel {
-  id: InvitationId,
-  email: UserEmail,
-  role: OrganizationRoleType,
-  organizationId: OrganizationId,
-  acceptedAt: InvitationAcceptedAt,
-  rejectedAt: InvitationRejectedAt,
-  createdAt: Date,
-  updatedAt: Date,
-}
-
-export interface UserOrganizationInvitation extends Omit<UserOrganizationInvitationModel, 'organizationId'> {
-  organization: OrganizationModel;
-  inviter: UserModel;
-}
-
-export interface UserExtendedOrganizationInvitation extends UserOrganizationInvitation {
-  invitee: UserModel | null;
-}
-
-export type  UserOrganizationInvitationUpdatableAttributes = Partial<Pick<UserOrganizationInvitationModel, 'acceptedAt' | 'rejectedAt'>>
-/* --------------------- User Organization Invitation Model --------------------- */
 
 
 /* --------------------- User Organization Model --------------------- */

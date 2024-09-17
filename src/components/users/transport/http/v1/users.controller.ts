@@ -15,20 +15,6 @@ export class UsersController {
     return res.code(201).send({ message: 'You have successfully signed up.' });
   };
 
-  signUpInvitedUser = async (req, res) => {
-    const { firstName, lastName, password, language, code } = req.body;
-
-    const userDataWithTokens = await usersService.signUpInvitedUser({
-      firstName,
-      lastName,
-      password,
-      language,
-      code,
-    });
-
-    return res.code(200).send(userDataWithTokens);
-  };
-
   login = async (req, res) => {
     const { email, password } = req.body;
     const ipAddress = req.ip;
@@ -119,16 +105,6 @@ export class UsersController {
     await usersService.leaveOrganization({ userId, organizationId });
 
     return res.code(200).send({ message: 'User was successfully removed from organization' });
-  };
-
-  getAllInvitationsToOrganizationsWithPagination = async (req, res) => {
-    const { id: userId } = req.user;
-    const { sort, page, where } = req.query;
-
-    const collectionOptions: CollectionOptions = { sort, page, where };
-    const collection = await usersService.getAllInvitationsToOrganizationsWithPagination(userId, collectionOptions);
-
-    return res.code(200).send(collection);
   };
 }
 

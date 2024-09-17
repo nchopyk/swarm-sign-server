@@ -1,15 +1,12 @@
 import usersResponseAttributes from './users.response.attributes';
 import organizationsResponseDtos from '../../../../organizations/transport/http/v1/organizations.response.dtos';
-import organizationsMembersResponseAttributes from '../../../../organizations-members/transport/http/v1/organizations-members.response.attributes';
 import { paginationDTO } from '../../../../general/general.response.dto';
 import { CollectionResource, DTOResource } from '../../../../general/general.types';
 import {
   LoginFunctionReturn,
-  UserOrganizationInvitation,
   UserOrganization,
   UserTokens,
   UserShortDTO,
-  UserExtendedOrganizationInvitation,
   UserDTO,
 } from '../../../service/users.types';
 
@@ -112,56 +109,6 @@ const leaveOrganizationResponseDTO = {
   } satisfies DTOResource<{ message: string }>,
 };
 
-const userInvitationToOrganizationDTO = {
-  type: 'object',
-  nullable: true,
-  properties: {
-    resourceType: { type: 'string', default: 'user.organization.invitation' },
-    id: organizationsMembersResponseAttributes.invitation.id,
-    email: usersResponseAttributes.user.email,
-    role: usersResponseAttributes.organizationRelation.role,
-    acceptedAt: organizationsMembersResponseAttributes.invitation.acceptedAt,
-    rejectedAt: organizationsMembersResponseAttributes.invitation.rejectedAt,
-    createdAt: organizationsMembersResponseAttributes.invitation.createdAt,
-    updatedAt: organizationsMembersResponseAttributes.invitation.updatedAt,
-    organization: organizationsResponseDtos.shortDTO,
-    inviter: shortDTO,
-  } satisfies DTOResource<UserOrganizationInvitation>,
-};
-
-const userExtendedInvitationToOrganizationDTO = {
-  type: 'object',
-  nullable: true,
-  properties: {
-    resourceType: { type: 'string', default: 'user.organization.invitation.extended' },
-    id: organizationsMembersResponseAttributes.invitation.id,
-    email: usersResponseAttributes.user.email,
-    role: usersResponseAttributes.organizationRelation.role,
-    acceptedAt: organizationsMembersResponseAttributes.invitation.acceptedAt,
-    rejectedAt: organizationsMembersResponseAttributes.invitation.rejectedAt,
-    createdAt: organizationsMembersResponseAttributes.invitation.createdAt,
-    updatedAt: organizationsMembersResponseAttributes.invitation.updatedAt,
-    organization: organizationsResponseDtos.shortDTO,
-    inviter: shortDTO,
-    invitee: shortDTO,
-  } satisfies DTOResource<UserExtendedOrganizationInvitation>,
-};
-
-const userInvitationsToOrganizationsListDTO = {
-  type: 'array',
-  items: userInvitationToOrganizationDTO,
-};
-
-const userInvitationsToOrganizationsCollectionDTO = {
-  type: 'object',
-  properties: {
-    resourceType: { type: 'string', default: 'collection' },
-    dataType: { type: 'string', default: 'user.organization.invitation' },
-    data: userInvitationsToOrganizationsListDTO,
-    meta: paginationDTO,
-  } satisfies DTOResource<CollectionResource<UserDTO>>,
-};
-
 const acceptInvitationToOrganizationResponseDTO = {
   type: 'object',
   properties: {
@@ -216,9 +163,6 @@ export default {
   resetPasswordResponseDTO,
   deleteAccountWithOrganizationsSuccessfulResponseDTO,
   leaveOrganizationResponseDTO,
-  userInvitationToOrganizationDTO,
-  userExtendedInvitationToOrganizationDTO,
-  userInvitationsToOrganizationsCollectionDTO,
   acceptInvitationToOrganizationResponseDTO,
   rejectInvitationToOrganizationResponseDTO,
   userOrganizationDTO,

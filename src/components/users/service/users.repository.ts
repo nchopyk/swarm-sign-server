@@ -8,7 +8,6 @@ import { addTablePrefixToColumns, convertFieldsToColumns } from '../../general/u
 import { Knex } from 'knex';
 import { CollectionRepositoryOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
 import { OrganizationId } from '../../organizations/service/organizations.types';
-import { InvitationId } from '../../organizations-members/service/organizations-members.types';
 import {
   UserActivityLogCreationAttributes,
   UserActivityLogId,
@@ -16,14 +15,11 @@ import {
   UserCreationAttributes,
   UserEmail,
   UserId,
-  UserOrganizationInvitationModel,
-  UserOrganizationInvitationUpdatableAttributes,
   UserModel,
   UserOrganization,
   UserOrganizationRelationModel,
   UserOrganizationRelationCreationAttributes,
   UserUpdatableAttributes,
-  UserOrganizationInvitation,
 } from './users.types';
 
 
@@ -34,9 +30,6 @@ export class UsersRepository {
 
   public readonly usersOrganizationRelationModelToColumnsMap: ModelToColumnsMapping<UserOrganizationRelationModel>;
   public readonly usersOrganizationRelationModelToPrefixedColumnsMap: ModelToPrefixedColumnsMapping;
-
-  public readonly usersInvitationsModelToColumnsMap: ModelToColumnsMapping<UserOrganizationInvitationModel>;
-  public readonly usersInvitationsModelToPrefixedColumnsMap: ModelToPrefixedColumnsMapping;
 
   public readonly inviterUsersModelToPrefixedColumnsMapWithAliases: ModelToPrefixedColumnsMapping;
 
@@ -69,16 +62,7 @@ export class UsersRepository {
       updatedAt: 'updated_at',
     };
 
-    this.usersInvitationsModelToColumnsMap = {
-      id: 'id',
-      email: 'invitee_email',
-      role: 'invitee_role',
-      acceptedAt: 'accepted_at',
-      rejectedAt: 'rejected_at',
-      organizationId: 'organization_id',
-      createdAt: 'created_at',
-      updatedAt: 'updated_at',
-    };
+
 
     this.usersModelToPrefixedColumnsMap = addTablePrefixToColumns(this.usersModelToColumnsMap, 'user');
 
@@ -88,8 +72,6 @@ export class UsersRepository {
     });
 
     this.usersOrganizationRelationModelToPrefixedColumnsMap = addTablePrefixToColumns(this.usersOrganizationRelationModelToColumnsMap, 'organizations_members');
-
-    this.usersInvitationsModelToPrefixedColumnsMap = addTablePrefixToColumns(this.usersInvitationsModelToColumnsMap, 'organizations_invitations');
 
     this.inviterUsersModelToPrefixedColumnsMapWithAliases = addTablePrefixToColumns(this.usersModelToColumnsMap, 'inviters', { includePrefixInAliases: true });
 
@@ -255,90 +237,10 @@ export class UsersRepository {
     return log || null;
   }
 
-  async getInvitationToOrganizationByIdForUser({
-    invitationId,
-    userEmail,
-  }: {
-    invitationId: InvitationId;
-    userEmail: UserEmail;
-  }): Promise<UserOrganizationInvitationModel | null> {
-    const invitation = await this.postgresClient
-      .select(this.usersInvitationsModelToPrefixedColumnsMap)
-      .from('organizations_invitations')
-      .join('organizations as organization', 'organization.id', 'organizations_invitations.organization_id')
-      .where({ 'organizations_invitations.id': invitationId, 'organizations_invitations.invitee_email': userEmail })
-      .first();
 
-    return invitation || null;
-  }
 
-  async getInvitationToOrganizationById(invitationId: InvitationId): Promise<UserOrganizationInvitation | null> {
-    const columns = {
-      ...this.usersInvitationsModelToPrefixedColumnsMap,
-      ...organizationsRepository.organizationsModelToPrefixedColumnsMapWithAliases,
-      ...this.inviterUsersModelToPrefixedColumnsMapWithAliases,
-    };
 
-    const rows = await this.postgresClient
-      .select(columns)
-      .from('organizations_invitations')
-      .join('organizations as organization', 'organization.id', 'organizations_invitations.organization_id')
-      .join('users as inviters', 'inviters.id', 'organizations_invitations.inviter_id')
-      .where({ 'organizations_invitations.id': invitationId })
-      .first();
 
-    return rows ? this.toUserOrganizationInvitationDTO(rows) : null;
-  }
-
-  async getAllInvitationsToOrganizationsByEmail(userEmail: UserEmail, collectionOptions: CollectionRepositoryOptions): Promise<Array<UserOrganizationInvitation>> {
-    const columns = {
-      ...this.usersInvitationsModelToPrefixedColumnsMap,
-      ...organizationsRepository.organizationsModelToPrefixedColumnsMapWithAliases,
-      ...this.inviterUsersModelToPrefixedColumnsMapWithAliases,
-    };
-
-    const rows = await this.postgresClient
-      .select(columns)
-      .from('organizations_invitations')
-      .join('organizations as organization', 'organization.id', 'organizations_invitations.organization_id')
-      .join('users as inviters', 'inviters.id', 'organizations_invitations.inviter_id')
-      .where({ 'organizations_invitations.invitee_email': userEmail })
-      .andWhere((builder) => convertFiltersToQueryCondition(builder, collectionOptions.where, columns))
-      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, columns))
-      .limit(collectionOptions.limit)
-      .offset(collectionOptions.skip);
-
-    return rows.map((row) => this.toUserOrganizationInvitationDTO(row));
-  }
-
-  async getTotalInvitationsToOrganizationsByEmail(userEmail: UserEmail, filters: CollectionWhere): Promise<number> {
-    const columns = {
-      ...this.usersInvitationsModelToPrefixedColumnsMap,
-      ...organizationsRepository.organizationsModelToPrefixedColumnsMapWithAliases,
-      ...this.inviterUsersModelToPrefixedColumnsMapWithAliases,
-    };
-
-    const result: { count: string } = await this.postgresClient
-      .count('organizations_invitations.id')
-      .from('organizations_invitations')
-      .join('organizations as organization', 'organization.id', 'organizations_invitations.organization_id')
-      .join('users as inviters', 'inviters.id', 'organizations_invitations.inviter_id')
-      .where({ invitee_email: userEmail })
-      .andWhere((builder) => convertFiltersToQueryCondition(builder, filters, columns))
-      .first();
-
-    return parseInt(result.count, 10);
-  }
-
-  async updateInvitationToOrganization(invitationId: InvitationId, fieldToUpdate: UserOrganizationInvitationUpdatableAttributes, trx?: Knex.Transaction): Promise<void> {
-    await (trx || this.postgresClient)
-      .update({
-        accepted_at: fieldToUpdate.acceptedAt,
-        rejected_at: fieldToUpdate.rejectedAt,
-      })
-      .from('organizations_invitations')
-      .where({ id: invitationId });
-  }
 
   private async toUserOrganizationDTO(rows) {
     return rows.map((row) =>
@@ -359,24 +261,7 @@ export class UsersRepository {
     );
   }
 
-  private toUserOrganizationInvitationDTO(rows): UserOrganizationInvitation {
-    return Object.entries(rows).reduce(
-      (acc, [key, value]) => {
-        const [table, column] = key.split('.');
 
-        if (table === 'organization') {
-          acc.organization[column] = value;
-        } else if (table === 'inviters') {
-          acc.inviter[column] = value;
-        } else {
-          acc[key] = value;
-        }
-
-        return acc;
-      },
-      { organization: {}, inviter: {} } as UserOrganizationInvitation,
-    );
-  }
 }
 
 export default new UsersRepository(postgresClient.getClient());

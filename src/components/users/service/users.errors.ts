@@ -1,7 +1,7 @@
 import { ApiError } from '../../../errors/error.types';
 import { CreateOrganizationFunctionParams, UserEmail, UserId } from './users.types';
 import { OrganizationId } from '../../organizations/service/organizations.types';
-import { InvitationId } from '../../organizations-members/service/organizations-members.types';
+
 
 const usersErrors = {
   withSuchEmailAlreadyExists: (context: { email: UserEmail }): ApiError => ({
@@ -86,30 +86,6 @@ const usersErrors = {
   organizationNotCreated: (context: CreateOrganizationFunctionParams): ApiError => ({
     errorType: 'user.organizationNotCreated',
     message: 'Organization not created',
-    context
-  }),
-
-  invitationWithSuchIdNotFound: (context: { userId: UserId, invitationId: InvitationId, }): ApiError => ({
-    errorType: 'user.invitationWithSuchIdNotFound',
-    message: 'Invitation not found',
-    context
-  }),
-
-  invitationAlreadyAccepted: (context: { userId: UserId, invitationId: InvitationId, }): ApiError => ({
-    errorType: 'user.invitationAlreadyAccepted',
-    message: 'Invitation already accepted',
-    context
-  }),
-
-  invitationAlreadyRejected: (context: { userId: UserId, invitationId: InvitationId }): ApiError => ({
-    errorType: 'user.invitationAlreadyRejected',
-    message: 'Invitation already rejected',
-    context
-  }),
-
-  invitationNotFoundOrCancelled: (context: { invitationId: InvitationId }): ApiError => ({
-    errorType: 'user.invitationNotFoundOrCancelled',
-    message: 'Invitation not found or cancelled',
     context
   }),
 

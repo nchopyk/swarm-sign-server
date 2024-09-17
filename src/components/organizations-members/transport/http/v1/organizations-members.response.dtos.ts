@@ -1,7 +1,6 @@
 import organizationsResponseAttributes from './organizations-members.response.attributes';
-import usersResponseAttributes from '../../../../users/transport/http/v1/users.response.attributes';
 import { CollectionResource, DTOResource } from '../../../../general/general.types';
-import { OrganizationInvitation, OrganizationInvitationModel, OrganizationMemberDTO } from '../../../service/organizations-members.types';
+import { OrganizationMemberDTO } from '../../../service/organizations-members.types';
 import { paginationDTO } from '../../../../general/general.response.dto';
 import { UserModel } from '../../../../users/service/users.types';
 import userDTOs from '../../../../users/transport/http/v1/users.response.dtos';
@@ -54,37 +53,6 @@ const inviteMemberResponseDTO = {
 /* ------------------------- Members Management DTOs ------------------------- */
 
 /* ------------------------- Organization Invitations DTOs ------------------------- */
-const invitationDTO = {
-  type: 'object',
-  nullable: true,
-  properties: {
-    resourceType: { type: 'string', default: 'organization.invitation' },
-    id: organizationsResponseAttributes.invitation.id,
-    email: usersResponseAttributes.user.email,
-    role: usersResponseAttributes.organizationRelation.role,
-    acceptedAt: organizationsResponseAttributes.invitation.acceptedAt,
-    rejectedAt: organizationsResponseAttributes.invitation.rejectedAt,
-    createdAt: organizationsResponseAttributes.invitation.createdAt,
-    updatedAt: organizationsResponseAttributes.invitation.updatedAt,
-    inviter: userDTOs.shortDTO,
-  } satisfies DTOResource<Omit<OrganizationInvitation, 'organizationId'>>,
-};
-
-const OrganizationInvitationsList = {
-  type: 'array',
-  items: invitationDTO,
-};
-
-const invitationsCollectionDTO = {
-  type: 'object',
-  properties: {
-    resourceType: { type: 'string', default: 'collection' },
-    dataType: { type: 'string', default: 'organization.invitation' },
-    data: OrganizationInvitationsList,
-    meta: paginationDTO,
-  } satisfies DTOResource<CollectionResource<OrganizationInvitationModel>>,
-};
-
 const deleteInvitationResponseDTO = {
   type: 'object',
   properties: {
@@ -99,7 +67,5 @@ export default {
   membersCollectionDTO,
   excludeMemberResponseDTO,
   inviteMemberResponseDTO,
-  invitationDTO,
-  invitationsCollectionDTO,
   deleteInvitationResponseDTO,
 };

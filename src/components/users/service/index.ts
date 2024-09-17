@@ -10,7 +10,6 @@ import TOKEN_TYPES from '../../../constants/token-types';
 import { ORGANIZATION_ROLES } from '../../../constants/organization-roles';
 import { JWT_CONFIG } from '../../../config';
 import { ACTIONS, SECTIONS, STATUSES } from '../../../constants/user-activity';
-import { InvitationTokenPayload } from '../../organizations-members/service/organizations-members.types';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 import { comparePasswords, hashPassword } from '../../general/utils/general.hash.utils';
 import { Collection, CollectionOptions } from '../../general/general.types';
@@ -21,11 +20,9 @@ import {
   LoginFunctionParams,
   LoginFunctionReturn,
   SignUpFunctionParams,
-  SignUpInvitedUserFunctionParams,
   UserActivityLogIp,
   UserActivityLogUserAgent,
   UserId,
-  UserOrganizationInvitation,
   UserModel,
   UserOrganizationRelationModel,
   UserTokens,
@@ -69,72 +66,6 @@ export class UsersService {
 
       return newUserId;
     });
-  }
-
-  async signUpInvitedUser({
-    firstName,
-    lastName,
-    password,
-    language,
-    code,
-  }: SignUpInvitedUserFunctionParams): Promise<LoginFunctionReturn> {
-    const tokenPayload = (await jwtService.verifyJWT(code)) as InvitationTokenPayload | null;
-
-    if (!tokenPayload) {
-      throw new Errors.BadRequest(generalErrors.invalidJWTToken());
-    }
-
-    if (tokenPayload.tokenType !== TOKEN_TYPES.ORGANIZATION_INVITATION_TOKEN) {
-      throw new Errors.BadRequest(generalErrors.invalidJWTTokenType());
-    }
-
-    const invitation = await usersRepository.getInvitationToOrganizationById(tokenPayload.invitationId);
-
-    if (!invitation) {
-      throw new Errors.BadRequest(usersErrors.invitationNotFoundOrCancelled({ invitationId: tokenPayload.invitationId }));
-    }
-
-    const existingUser = await usersRepository.getModelByEmail(invitation.email);
-
-    if (existingUser) {
-      throw new Errors.BadRequest(usersErrors.withSuchEmailAlreadyExists({ email: invitation.email }));
-    }
-
-    const hashedPassword = await hashPassword(password);
-
-    const newUserId = await postgresDB.getClient().transaction(async (trx) => {
-      const newUserId = await usersRepository.create(
-        {
-          email: invitation.email,
-          password: hashedPassword,
-          firstName,
-          lastName,
-          language,
-          emailVerifiedAt: new Date(),
-        },
-        trx,
-      );
-
-      await usersRepository.createUserToOrganizationRelation({
-        userId: newUserId,
-        organizationId: invitation.organization.id,
-        role: invitation.role,
-      }, trx);
-
-      await usersRepository.updateInvitationToOrganization(invitation.id, { acceptedAt: new Date() }, trx);
-
-      return newUserId;
-    });
-
-    const newUser = await usersRepository.getModelById(newUserId);
-
-    if (!newUser) {
-      throw new Errors.InternalError(usersErrors.withSuchIdNotFound({ userId: newUserId }));
-    }
-
-    const tokens = await this.generateUserTokens(newUser);
-
-    return { user: newUser, tokens };
   }
 
 
@@ -335,97 +266,6 @@ export class UsersService {
     }
 
     await usersRepository.deleteUserOrganizationRelation({ userId, organizationId });
-  }
-
-  async getAllInvitationsToOrganizationsWithPagination(userId: UserId, collectionOptions: CollectionOptions): Promise<Collection<UserOrganizationInvitation>> {
-    const user = await usersRepository.getModelById(userId);
-
-    if (!user) {
-      throw new Errors.NotFoundError(usersErrors.withSuchIdNotFound({ userId }));
-    }
-
-    const total = await usersRepository.getTotalInvitationsToOrganizationsByEmail(user.email, collectionOptions.where);
-
-    const { sort, page, where } = collectionOptions;
-    const pagination = calculatePagination(page.number, page.size, total);
-    const { skip, limit } = resolveSkipAndLimitFromPagination(pagination);
-
-    const invitations = await usersRepository.getAllInvitationsToOrganizationsByEmail(user.email, { sort, skip, limit, where });
-
-    return {
-      data: invitations,
-      meta: pagination,
-    };
-  }
-
-  async acceptInvitationToOrganization({ userId, invitationId }: { userId: UserId; invitationId: string }): Promise<void> {
-    const user = await usersRepository.getModelById(userId);
-
-    if (!user) {
-      throw new Errors.NotFoundError(usersErrors.withSuchIdNotFound({ userId }));
-    }
-
-    const invitation = await usersRepository.getInvitationToOrganizationByIdForUser({ invitationId, userEmail: user.email });
-
-    if (!invitation) {
-      throw new Errors.BadRequest(usersErrors.invitationWithSuchIdNotFound({ invitationId, userId }));
-    }
-
-    if (invitation.acceptedAt) {
-      throw new Errors.BadRequest(usersErrors.invitationAlreadyAccepted({ invitationId, userId }));
-    }
-
-    if (invitation.rejectedAt) {
-      throw new Errors.BadRequest(usersErrors.invitationAlreadyRejected({ invitationId, userId }));
-    }
-
-    const [organization, organizationRelation] = await Promise.all([
-      organizationsRepository.getModelById(invitation.organizationId),
-      usersRepository.getUserOrganizationRelation({ userId, organizationId: invitation.organizationId }),
-    ]);
-
-    if (!organization) {
-      throw new Errors.NotFoundError(organizationsErrors.withSuchIdNotFound({ organizationId: invitation.organizationId }));
-    }
-
-    if (organizationRelation) {
-      throw new Errors.BadRequest(usersErrors.userAlreadyBelongsToOrganization({ userId, organizationId: invitation.organizationId }));
-    }
-
-    await postgresDB.getClient().transaction(async (trx) => {
-      await usersRepository.createUserToOrganizationRelation({ userId, organizationId: invitation.organizationId, role: invitation.role }, trx);
-      await usersRepository.updateInvitationToOrganization(invitationId, { acceptedAt: new Date() }, trx);
-    });
-  }
-
-  async rejectInvitationToOrganization({ userId, invitationId }: { userId: UserId; invitationId: string }): Promise<void> {
-    const user = await usersRepository.getModelById(userId);
-
-    if (!user) {
-      throw new Errors.NotFoundError(usersErrors.withSuchIdNotFound({ userId }));
-    }
-
-    const invitation = await usersRepository.getInvitationToOrganizationByIdForUser({ invitationId, userEmail: user.email });
-
-    if (!invitation) {
-      throw new Errors.BadRequest(usersErrors.invitationWithSuchIdNotFound({ invitationId, userId }));
-    }
-
-    if (invitation.acceptedAt) {
-      throw new Errors.BadRequest(usersErrors.invitationAlreadyAccepted({ invitationId, userId }));
-    }
-
-    if (invitation.rejectedAt) {
-      throw new Errors.BadRequest(usersErrors.invitationAlreadyRejected({ invitationId, userId }));
-    }
-
-    const organizationRelation = await usersRepository.getUserOrganizationRelation({ userId, organizationId: invitation.organizationId });
-
-    if (organizationRelation) {
-      throw new Errors.BadRequest(usersErrors.userAlreadyBelongsToOrganization({ userId, organizationId: invitation.organizationId }));
-    }
-
-    await usersRepository.updateInvitationToOrganization(invitationId, { rejectedAt: new Date() });
   }
 
   private async generateUserTokens(user: UserModel): Promise<UserTokens> {

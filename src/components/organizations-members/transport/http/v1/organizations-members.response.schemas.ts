@@ -17,10 +17,6 @@ const responsesSchemas = {
     200: organizationsMembersDTOs.inviteMemberResponseDTO
   },
 
-  getOrganizationInvitations: {
-    200: organizationsMembersDTOs.invitationsCollectionDTO
-  },
-
   cancelOrganizationInvitation: {
     200: organizationsMembersDTOs.deleteInvitationResponseDTO
   },

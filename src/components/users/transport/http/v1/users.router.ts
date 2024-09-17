@@ -13,13 +13,6 @@ const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPl
     }
   }, controller.signUp);
 
-  fastify.post('users/invite-sign-up', {
-    schema: {
-      body: validationSchemas.signUpInvitedUser.body,
-      response: responsesSchemas.signUpInvitedUser
-    }
-  }, controller.signUpInvitedUser);
-
   fastify.post('users/login', {
     schema: {
       body: validationSchemas.login.body,
@@ -89,13 +82,6 @@ const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPl
     }
   }, controller.leaveOrganization);
 
-  fastify.get('users/me/organizations/invitations', {
-    onRequest: userAuthenticationHook,
-    schema: {
-      querystring: validationSchemas.getAllInvitationsToOrganizationsWithPagination.query,
-      response: responsesSchemas.getAllInvitationsToOrganizationsWithPagination
-    }
-  }, controller.getAllInvitationsToOrganizationsWithPagination);
 
   done();
 };
