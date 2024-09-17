@@ -109,22 +109,6 @@ const leaveOrganizationResponseDTO = {
   } satisfies DTOResource<{ message: string }>,
 };
 
-const acceptInvitationToOrganizationResponseDTO = {
-  type: 'object',
-  properties: {
-    resourceType: { type: 'string', default: 'user.organization.invitation.accepted' },
-    message: { type: 'string' },
-  } satisfies DTOResource<{ message: string }>,
-};
-
-const rejectInvitationToOrganizationResponseDTO = {
-  type: 'object',
-  properties: {
-    resourceType: { type: 'string', default: 'user.organization.invitation.rejected' },
-    message: { type: 'string' },
-  } satisfies DTOResource<{ message: string }>,
-};
-
 const userOrganizationDTO = {
   type: 'object',
   nullable: true,
@@ -163,8 +147,6 @@ export default {
   resetPasswordResponseDTO,
   deleteAccountWithOrganizationsSuccessfulResponseDTO,
   leaveOrganizationResponseDTO,
-  acceptInvitationToOrganizationResponseDTO,
-  rejectInvitationToOrganizationResponseDTO,
   userOrganizationDTO,
   userOrganizationsCollectionDTO,
 };

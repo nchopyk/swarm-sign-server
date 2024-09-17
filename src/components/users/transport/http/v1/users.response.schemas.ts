@@ -61,14 +61,6 @@ const responsesSchemas = {
     200: usersDTOs.leaveOrganizationResponseDTO,
   },
 
-  acceptInvitationToOrganization: {
-    200: usersDTOs.acceptInvitationToOrganizationResponseDTO
-  },
-
-  rejectInvitationToOrganization: {
-    200: usersDTOs.rejectInvitationToOrganizationResponseDTO
-  },
-
 };
 
 export default responsesSchemas;
