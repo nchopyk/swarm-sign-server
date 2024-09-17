@@ -42,30 +42,10 @@ const excludeMemberResponseDTO = {
     message: { type: 'string' },
   } satisfies DTOResource<{ message: string }>,
 };
-
-const inviteMemberResponseDTO = {
-  type: 'object',
-  properties: {
-    resourceType: { type: 'string', default: 'organization.member.invited' },
-    message: { type: 'string' },
-  } satisfies DTOResource<{ message: string }>,
-};
 /* ------------------------- Members Management DTOs ------------------------- */
-
-/* ------------------------- Organization Invitations DTOs ------------------------- */
-const deleteInvitationResponseDTO = {
-  type: 'object',
-  properties: {
-    resourceType: { type: 'string', default: 'organization.invitation.deleted' },
-    message: { type: 'string' },
-  } satisfies DTOResource<{ message: string }>,
-};
-/* ------------------------- Organization Invitations DTOs ------------------------- */
 
 export default {
   memberDTO,
   membersCollectionDTO,
   excludeMemberResponseDTO,
-  inviteMemberResponseDTO,
-  deleteInvitationResponseDTO,
 };

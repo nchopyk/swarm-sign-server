@@ -12,14 +12,6 @@ const responsesSchemas = {
   excludeMemberFromOrganization: {
     200: organizationsMembersDTOs.excludeMemberResponseDTO
   },
-
-  inviteUserToOrganization: {
-    200: organizationsMembersDTOs.inviteMemberResponseDTO
-  },
-
-  cancelOrganizationInvitation: {
-    200: organizationsMembersDTOs.deleteInvitationResponseDTO
-  },
 };
 
 export default responsesSchemas;

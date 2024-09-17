@@ -2,11 +2,9 @@ import Joi from 'joi';
 import organizationsAttributesConstraints from '../../../../organizations/service/organizations.attributes-constraints';
 import organizationsMembersAttributesConstraints from '../../../service/organizations-members.attributes-constraints';
 import usersAttributesConstraints from '../../../../users/service/users.attributes-constraints';
-import generalAttributesConstraints from '../../../../general/general.attributes-constraints';
 import collectionQueryParamsProcessor from '../../../../../modules/collection-query-processor';
 import organizationsMembersRepository from '../../../service/organizations-members.repository';
 import { dateOperations, stringOperations } from '../../../../../modules/collection-query-processor/filter/filter.operations';
-import { InviteUserToOrganizationFunctionParams } from '../../../service/organizations-members.types';
 import { PrefixedUserShortDTO, UserOrganizationRelationDTO } from '../../../../users/service/users.types';
 import { FilterColumnConfig } from '../../../../../modules/collection-query-processor/filter/types';
 

@@ -20,14 +20,6 @@ export interface OrganizationMemberUpdatableAttributes {
 /* --------------------- Organization User Relation Model --------------------- */
 
 /* --------------------- Functions Params --------------------- */
-export interface InviteUserToOrganizationFunctionParams {
-  organizationId: OrganizationId;
-  inviter: UserModel;
-  email: UserEmail;
-  role: OrganizationMemberRole;
-  redirectUrl: string;
-}
-
 export interface GetOrganizationMemberByIdFunctionParams {
   organizationId: OrganizationId;
   userId: UserId;
