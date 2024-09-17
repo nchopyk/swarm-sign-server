@@ -1,4 +1,4 @@
-import { UserEmail, UserId, UserModel, UserShortDTO } from '../../users/service/users.types';
+import { UserEmail, UserId, UserShortDTO } from '../../users/service/users.types';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 
 

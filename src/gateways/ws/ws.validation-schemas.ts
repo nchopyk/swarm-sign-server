@@ -1,5 +1,4 @@
 import Joi from 'joi';
-import { clientTypes } from './ws.constants';
 
 const validationSchemas = {
   incomingMessage: Joi.object().keys({

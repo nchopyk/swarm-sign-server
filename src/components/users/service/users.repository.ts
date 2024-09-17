@@ -13,7 +13,6 @@ import {
   UserActivityLogId,
   UserActivityLogModel,
   UserCreationAttributes,
-  UserEmail,
   UserId,
   UserModel,
   UserOrganization,
