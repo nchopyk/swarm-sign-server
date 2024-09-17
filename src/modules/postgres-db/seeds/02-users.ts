@@ -14,7 +14,7 @@ export async function seed(knex: Knex): Promise<void> {
   const password = await hashPassword(POSTGRES_DB.SEEDS.USERS_PASSWORD);
 
   for (let i = 0; i < POSTGRES_DB.SEEDS.USERS_COUNT; i++) {
-    const newUserId = await usersRepository.create({
+    await usersRepository.create({
       email: faker.internet.email().toLowerCase(),
       password,
       firstName: faker.person.firstName(),

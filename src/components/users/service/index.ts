@@ -17,7 +17,6 @@ import { Collection, CollectionOptions } from '../../general/general.types';
 import { calculatePagination, resolveSkipAndLimitFromPagination } from '../../../modules/collection-query-processor/pagination/pagination.resolver';
 import {
   CreateOrganizationFunctionParams,
-  JWTEmailVerificationTokenPayload,
   JWTAuthTokenPayload,
   LoginFunctionParams,
   LoginFunctionReturn,

@@ -1,6 +1,6 @@
 import { WebSocketServer } from 'ws';
 import { WS_CONNECTION_HEALTHCHECK_INTERVAL } from '../../config';
-import { ExtendedWebSocket, SendErrorFuncParams, SendMessageFuncParams } from './ws.types';
+import { ExtendedWebSocket } from './ws.types';
 
 
 export const heartbeat = (ws) => {

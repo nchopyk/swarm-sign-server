@@ -1,6 +1,6 @@
 import organizationsService from '../../../service/index';
 import { CollectionOptions } from '../../../../general/general.types';
-import { InviteUserToOrganizationFunctionParams } from '../../../service/organizations-members.types';
+
 
 export class OrganizationsMembersController {
   getAllMembers = async (req, res) => {
