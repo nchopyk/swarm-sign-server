@@ -3,7 +3,6 @@ import { faker } from '@faker-js/faker';
 import usersRepository from '../../../components/users/service/users.repository';
 import { hashPassword } from '../../../components/general/utils/general.hash.utils';
 import LANGUAGES from '../../../constants/languages';
-import { DISTANCE, TEMPERATURE, VOLUME } from '../../../constants/units';
 import { POSTGRES_DB } from '../../../config';
 
 export async function seed(knex: Knex): Promise<void> {
@@ -20,9 +19,6 @@ export async function seed(knex: Knex): Promise<void> {
       firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),
       language: faker.helpers.arrayElement(Object.values(LANGUAGES)),
-      temperatureUnit: faker.helpers.arrayElement(Object.values(TEMPERATURE)),
-      distanceUnit: faker.helpers.arrayElement(Object.values(DISTANCE)),
-      volumeUnit: faker.helpers.arrayElement(Object.values(VOLUME)),
       emailVerifiedAt: faker.date.recent(),
     });
   }

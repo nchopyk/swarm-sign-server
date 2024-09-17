@@ -1,4 +1,3 @@
-import { TemperatureUnitType, DistanceUnitType, VolumeUnitType } from '../../../constants/units';
 import { LanguageType } from '../../../constants/languages';
 import { OrganizationRoleType } from '../../../constants/organization-roles';
 import { TokenTypeValue } from '../../../constants/token-types';
@@ -18,9 +17,6 @@ export type UserLastName = string;
 export type UserPassword = string;
 export type UserAvatarUrl = string | null;
 export type UserLanguage = LanguageType;
-export type UserTemperatureUnit = TemperatureUnitType;
-export type UserDistanceUnit = DistanceUnitType;
-export type UserVolumeUnit = VolumeUnitType;
 export type UserAccountBlockedAt = Date | null;
 export type UserAccountBlockedReason = string | null;
 export type UserEmailVerifiedAt = Date | null;
@@ -45,9 +41,6 @@ export type UserModel = {
   password: UserPassword;
   avatarUrl: UserAvatarUrl;
   language: UserLanguage;
-  temperatureUnit: UserTemperatureUnit;
-  distanceUnit: UserDistanceUnit;
-  volumeUnit: UserVolumeUnit;
   accountBlockedAt: UserAccountBlockedAt;
   accountBlockedReason: UserAccountBlockedReason;
   emailVerifiedAt: UserEmailVerifiedAt;
@@ -62,9 +55,6 @@ export interface UserCreationAttributes {
   firstName: UserFirstName;
   lastName: UserLastName;
   language: UserLanguage;
-  temperatureUnit: UserTemperatureUnit;
-  distanceUnit: UserDistanceUnit;
-  volumeUnit: UserVolumeUnit;
   emailVerifiedAt?: UserEmailVerifiedAt;
 }
 

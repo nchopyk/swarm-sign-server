@@ -41,9 +41,6 @@ export class UsersService {
     firstName,
     lastName,
     language,
-    temperatureUnit,
-    distanceUnit,
-    volumeUnit,
     organizationName,
   }: SignUpFunctionParams): Promise<void> {
     email = email.toLowerCase();
@@ -63,9 +60,6 @@ export class UsersService {
         firstName,
         lastName,
         language,
-        temperatureUnit,
-        distanceUnit,
-        volumeUnit,
         emailVerifiedAt: new Date(),
       }, trx);
 
@@ -82,9 +76,6 @@ export class UsersService {
     lastName,
     password,
     language,
-    temperatureUnit,
-    distanceUnit,
-    volumeUnit,
     code,
   }: SignUpInvitedUserFunctionParams): Promise<LoginFunctionReturn> {
     const tokenPayload = (await jwtService.verifyJWT(code)) as InvitationTokenPayload | null;
@@ -119,9 +110,6 @@ export class UsersService {
           firstName,
           lastName,
           language,
-          temperatureUnit,
-          distanceUnit,
-          volumeUnit,
           emailVerifiedAt: new Date(),
         },
         trx,

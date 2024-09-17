@@ -5,7 +5,6 @@ import organizationsMembersAttributesConstraints from '../../../../organizations
 import usersRepository from '../../../service/users.repository';
 import collectionQueryParamsProcessor from '../../../../../modules/collection-query-processor';
 import LANGUAGES from '../../../../../constants/languages';
-import { DISTANCE, TEMPERATURE, VOLUME } from '../../../../../constants/units';
 import generalAttributesConstraints from '../../../../general/general.attributes-constraints';
 import organizationsRepository from '../../../../organizations/service/organizations.repository';
 import { dateOperations, stringOperations } from '../../../../../modules/collection-query-processor/filter/filter.operations';
@@ -18,6 +17,7 @@ import {
   UserUpdatableAttributes,
 } from '../../../service/users.types';
 
+
 const validationSchemas = {
   signUp: {
     body: Joi.object().keys({
@@ -26,9 +26,6 @@ const validationSchemas = {
       firstName: usersAttributesConstraints.user.firstName.required(),
       lastName: usersAttributesConstraints.user.lastName.required(),
       language: usersAttributesConstraints.user.language.default(LANGUAGES.EN_US),
-      temperatureUnit: usersAttributesConstraints.user.temperatureUnit.default(TEMPERATURE.CELSIUS),
-      distanceUnit: usersAttributesConstraints.user.distanceUnit.default(DISTANCE.KILOMETER),
-      volumeUnit: usersAttributesConstraints.user.volumeUnit.default(VOLUME.LITER),
       organizationName: organizationAttributesConstraints.organization.name.required(),
       // verificationRedirectUrl: generalAttributesConstraints.redirectUrlWithCode.required(),
     } satisfies Record<keyof Omit<SignUpFunctionParams, 'emailVerifiedAt'>, Joi.Schema>),
@@ -39,9 +36,6 @@ const validationSchemas = {
       firstName: usersAttributesConstraints.user.firstName.required(),
       lastName: usersAttributesConstraints.user.lastName.required(),
       language: usersAttributesConstraints.user.language.default(LANGUAGES.EN_US),
-      temperatureUnit: usersAttributesConstraints.user.temperatureUnit.default(TEMPERATURE.CELSIUS),
-      distanceUnit: usersAttributesConstraints.user.distanceUnit.default(DISTANCE.KILOMETER),
-      volumeUnit: usersAttributesConstraints.user.volumeUnit.default(VOLUME.LITER),
       password: usersAttributesConstraints.user.password.required(),
       code: generalAttributesConstraints.JWTToken.required(),
     } satisfies Record<keyof Omit<SignUpInvitedUserFunctionParams, 'emailVerifiedAt'>, Joi.Schema>),
@@ -96,14 +90,11 @@ const validationSchemas = {
         currentPassword: usersAttributesConstraints.user.password,
         avatarUrl: usersAttributesConstraints.user.avatarUrl,
         language: usersAttributesConstraints.user.language,
-        temperatureUnit: usersAttributesConstraints.user.temperatureUnit,
-        distanceUnit: usersAttributesConstraints.user.distanceUnit,
-        volumeUnit: usersAttributesConstraints.user.volumeUnit,
         twoFactorAuthEnabled: usersAttributesConstraints.user.twoFactorAuthEnabled,
       } satisfies Record<keyof Omit<UserUpdatableAttributes, 'accountBlockedReason' | 'accountBlockedAt' | 'emailVerifiedAt' | 'password'>, Joi.Schema>)
       .with('newPassword', 'currentPassword')
       .with('currentPassword', 'newPassword')
-      .or('firstName', 'lastName', 'newPassword', 'currentPassword', 'avatarUrl', 'language', 'temperatureUnit', 'distanceUnit', 'volumeUnit', 'twoFactorAuthEnabled'),
+      .or('firstName', 'lastName', 'newPassword', 'currentPassword', 'avatarUrl', 'language', 'twoFactorAuthEnabled'),
   },
 
   createUserOrganization: {

@@ -4,10 +4,10 @@ import { SignUpFunctionParams, UserUpdatableAttributes } from '../../../service/
 
 export class UsersController {
   signUp = async (req, res) => {
-    const { email, password, firstName, lastName, language, temperatureUnit, distanceUnit, volumeUnit, organizationName } = req.body;
+    const { email, password, firstName, lastName, language, organizationName } = req.body;
 
     const userCreationAttributes: SignUpFunctionParams = {
-      email, password, firstName, lastName, language, temperatureUnit, distanceUnit, volumeUnit, organizationName
+      email, password, firstName, lastName, language, organizationName
     };
 
     await usersService.signUp(userCreationAttributes);
@@ -16,16 +16,13 @@ export class UsersController {
   };
 
   signUpInvitedUser = async (req, res) => {
-    const { firstName, lastName, password, language, temperatureUnit, distanceUnit, volumeUnit, code } = req.body;
+    const { firstName, lastName, password, language, code } = req.body;
 
     const userDataWithTokens = await usersService.signUpInvitedUser({
       firstName,
       lastName,
       password,
       language,
-      temperatureUnit,
-      distanceUnit,
-      volumeUnit,
       code,
     });
 
@@ -62,7 +59,7 @@ export class UsersController {
 
   updateCurrentUser = async (req, res) => {
     const { id } = req.user;
-    const { firstName, lastName, newPassword, currentPassword, avatarUrl, language, temperatureUnit, distanceUnit, volumeUnit, twoFactorAuthEnabled } = req.body;
+    const { firstName, lastName, newPassword, currentPassword, avatarUrl, language, twoFactorAuthEnabled } = req.body;
 
     const attributesToUpdate: UserUpdatableAttributes = {
       firstName,
@@ -71,9 +68,6 @@ export class UsersController {
       currentPassword,
       avatarUrl,
       language,
-      temperatureUnit,
-      distanceUnit,
-      volumeUnit,
       twoFactorAuthEnabled,
     };
 
