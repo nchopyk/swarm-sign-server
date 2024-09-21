@@ -63,7 +63,6 @@
     "pino": "^8.17.2",
     "prom-client": "^15.1.2",
     "qs": "^6.12.3",
-    "twilio": "^5.1.0",
     "ws": "^8.16.0"
   },
   "devDependencies": {
