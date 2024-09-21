@@ -5,6 +5,7 @@ import logger from '../../modules/logger';
 import qs from 'qs';
 import cors from '@fastify/cors';
 import formBodyParser from '@fastify/formbody';
+import multipart from '@fastify/multipart';
 import errorHandler from './http.error-handler';
 import validatorCompiler from './http.validator-compiler';
 import usersRouter from '../../components/users/transport/http/v1/users.router';
@@ -24,6 +25,8 @@ async function initHttpGateway(): Promise<FastifyInstance> {
   try {
     server.register(cors, { origin: true });
     server.register(formBodyParser);
+    server.register(multipart);
+
     server.setErrorHandler(errorHandler);
     server.setValidatorCompiler(validatorCompiler);
 
