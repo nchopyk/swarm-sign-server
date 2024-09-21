@@ -1,5 +1,6 @@
 import type { Knex } from 'knex';
 
+
 export async function up(knex: Knex): Promise<void> {
   await knex.schema.createTable('screens', (table) => {
     table.uuid('id').primary();
@@ -24,5 +25,4 @@ export async function up(knex: Knex): Promise<void> {
 export async function down(knex: Knex): Promise<void> {
   await knex.raw('DROP TRIGGER change_updated_at_on_row_modification ON screens');
   await knex.schema.dropTable('screens');
-  await knex.raw('DROP TYPE sim_cards_state_enum');
 }
