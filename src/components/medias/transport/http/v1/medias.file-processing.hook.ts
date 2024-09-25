@@ -1,7 +1,7 @@
 import Errors from '../../../../../errors';
 import mediasErrors from '../../../service/medias.errors';
 
-export default async (req, res) => {
+export default async (req) => {
   if (!req.isMultipart()) {
     throw new Errors.BadRequest(mediasErrors.notMultipartFormData());
   }
