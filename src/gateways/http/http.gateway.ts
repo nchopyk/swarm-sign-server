@@ -14,6 +14,7 @@ import organizationsRouter from '../../components/organizations/transport/http/v
 import organizationsMembersRouter from '../../components/organizations-members/transport/http/v1/organizations-members.router';
 import screensRouter from '../../components/screens/transport/http/v1/screens.router';
 import mediasRouter from '../../components/medias/transport/http/v1/medias.router';
+import playlistsRouter from '../../components/playlists/transport/http/v1/playlists.router';
 
 
 const server = fastify({
@@ -39,6 +40,7 @@ async function initHttpGateway(): Promise<FastifyInstance> {
     server.register(organizationsMembersRouter, { prefix: 'v1/' });
     server.register(screensRouter, { prefix: 'v1/' });
     server.register(mediasRouter, { prefix: 'v1/' });
+    server.register(playlistsRouter, { prefix: 'v1/' });
 
     await server.listen({ host: config.HOST, port: config.HTTP_PORT });
     logger.info(`[HTTP GATEWAY] started on ${config.HOST}:${config.HTTP_PORT}`);
