@@ -112,4 +112,4 @@ dist
 .npmrc
 
 # Static files
-.static/
+static/
