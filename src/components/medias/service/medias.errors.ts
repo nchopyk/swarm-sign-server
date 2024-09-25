@@ -1,11 +1,11 @@
 import { ApiError } from '../../../errors/error.types';
-import { MediaCreationAttributes, MediaId } from './medias.types';
+import { MediaId, MediaName } from './medias.types';
 
 
 const mediasErrors = {
-  notCreated: (context: { mediaData: MediaCreationAttributes }): ApiError => ({
+  notCreated: (context: { mediaName: MediaName }): ApiError => ({
     errorType: 'medias.notCreated',
-    message: `Media was not created`,
+    message: `Media with name=${context.mediaName} not created`,
     context
   }),
 
@@ -13,6 +13,22 @@ const mediasErrors = {
     errorType: 'medias.withSuchIdNotFound',
     message: `Media with id=${context.mediaId} not found`,
     context
+  }),
+
+  notDeleted: (context: { mediaId: MediaId }): ApiError => ({
+    errorType: 'medias.notDeleted',
+    message: `Media with id=${context.mediaId} not deleted`,
+    context
+  }),
+
+  notMultipartFormData: (): ApiError => ({
+    errorType: 'medias.notMultipartFormData',
+    message: 'Content-Type must be multipart/form-data',
+  }),
+
+  noFieldsProvided: (): ApiError => ({
+    errorType: 'medias.noFieldsProvided',
+    message: 'No fields provided in multipart/form-data',
   }),
 };
 

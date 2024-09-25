@@ -1,11 +1,12 @@
-import config from '../../config';
+import config, { MAX_FILE_SIZE } from '../../config';
 import { PROD } from '../../constants/node-evns';
 import { fastify, FastifyInstance } from 'fastify';
 import logger from '../../modules/logger';
 import qs from 'qs';
 import cors from '@fastify/cors';
-import formBodyParser from '@fastify/formbody';
 import multipart from '@fastify/multipart';
+import formBodyParser from '@fastify/formbody';
+import staticDeliver from '@fastify/static';
 import errorHandler from './http.error-handler';
 import validatorCompiler from './http.validator-compiler';
 import usersRouter from '../../components/users/transport/http/v1/users.router';
@@ -24,8 +25,9 @@ const server = fastify({
 async function initHttpGateway(): Promise<FastifyInstance> {
   try {
     server.register(cors, { origin: true });
+    server.register(multipart, { limits: { fileSize: MAX_FILE_SIZE } });
     server.register(formBodyParser);
-    server.register(multipart);
+    server.register(staticDeliver, { root: config.STATIC_FOLDER_PATH, prefix: '/v1/static' });
 
     server.setErrorHandler(errorHandler);
     server.setValidatorCompiler(validatorCompiler);

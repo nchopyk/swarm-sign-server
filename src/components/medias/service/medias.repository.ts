@@ -8,7 +8,7 @@ import { OrganizationId, OrganizationModel } from '../../organizations/service/o
 import { Knex } from 'knex';
 import { CollectionRepositoryOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
 import {
-  MediaCreationAttributes,
+  MediaServiceRepositoryAttributes,
   MediaRepositoryUpdatableAttributes,
   GetDTOByIdForOrganizationFuncParams,
   GetModelByIdForOrganizationFuncParams,
@@ -25,6 +25,8 @@ export class MediasRepository {
     content: 'content',
     type: 'type',
     duration: 'duration',
+    width: 'width',
+    height: 'height',
     mimeType: 'mime_type',
     size: 'size',
     createdAt: 'created_at',
@@ -42,7 +44,7 @@ export class MediasRepository {
     this.postgresClient = postgresClient;
   }
 
-  async create(newMediaData: MediaCreationAttributes, trx?: Knex.Transaction): Promise<MediaId> {
+  async create(newMediaData: MediaServiceRepositoryAttributes, trx?: Knex.Transaction): Promise<MediaId> {
     const id = crypto.randomUUID();
     const columns = convertFieldsToColumns({ ...newMediaData, id }, this.mediaModelToTableColumnMap);
 
@@ -115,6 +117,8 @@ export class MediasRepository {
     if (Object.keys(columns).length === 0) {
       return;
     }
+
+    console.log('columns', columns);
 
     await (trx || this.postgresClient)
       .update(columns)

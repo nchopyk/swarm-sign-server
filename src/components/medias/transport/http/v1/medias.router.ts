@@ -5,6 +5,7 @@ import userAuthenticationHook from '../../../../users/transport/http/v1/users.au
 import organizationsRoleAccessControlHook from '../../../../organizations/transport/http/v1/organizations.role-access-control.hook';
 import { ORGANIZATION_ROLES } from '../../../../../constants/organization-roles';
 import { FastifyInstance, FastifyPluginOptions, FastifyPluginCallback } from 'fastify';
+import mediasFileProcessingHook from './medias.file-processing.hook';
 
 
 const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPluginOptions, done) => {
@@ -12,7 +13,9 @@ const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPl
 
   fastify.post('organizations/:organizationId/medias', {
     preHandler: organizationsRoleAccessControlHook([ORGANIZATION_ROLES.OWNER, ORGANIZATION_ROLES.ADMIN]),
+    preValidation: mediasFileProcessingHook,
     schema: {
+      consumes: ['multipart/form-data'],
       params: mediasValidationSchemas.create.params,
       body: mediasValidationSchemas.create.body,
       response: transmittersTransmittersValidationSchemas.create,
@@ -38,7 +41,9 @@ const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPl
 
   fastify.patch('organizations/:organizationId/medias/:mediaId', {
     preHandler: organizationsRoleAccessControlHook([ORGANIZATION_ROLES.OWNER, ORGANIZATION_ROLES.ADMIN]),
+    preValidation: mediasFileProcessingHook,
     schema: {
+      consumes: ['multipart/form-data'],
       params: mediasValidationSchemas.updateByIdForOrganization.params,
       body: mediasValidationSchemas.updateByIdForOrganization.body,
       response: transmittersTransmittersValidationSchemas.updateByIdForOrganization,

@@ -7,11 +7,7 @@ import collectionQueryParamsProcessor from '../../../../../modules/collection-qu
 import { dateOperations, nullableOperations, stringOperations } from '../../../../../modules/collection-query-processor/filter/filter.operations';
 import { FilterColumnConfig } from '../../../../../modules/collection-query-processor/filter/types';
 import { PrefixedOrganizationShortDTO } from '../../../../organizations/service/organizations.types';
-import {
-  MediaCreationAttributes,
-  MediaDTO,
-  MediaServiceUpdatableAttributes,
-} from '../../../service/medias.types';
+import { MediaDTO, MediaServiceCreationAttributes, MediaServiceUpdatableAttributes } from '../../../service/medias.types';
 
 
 const mediasValidationSchemas = {
@@ -22,12 +18,14 @@ const mediasValidationSchemas = {
     body: Joi.object().keys({
       name: mediasAttributesConstraints.media.name.required(),
       notes: mediasAttributesConstraints.media.notes.allow(null),
-      content: mediasAttributesConstraints.media.content.required(),
       type: mediasAttributesConstraints.media.type.required(),
-      duration: mediasAttributesConstraints.media.duration.allow(null),
-      mimeType: mediasAttributesConstraints.media.mimeType.required(),
-      size: mediasAttributesConstraints.media.size.allow(null),
-    } satisfies Record<keyof Omit<MediaCreationAttributes, 'organizationId'>, Joi.Schema>),
+      mediaFile: Joi.object().keys({
+        filename: mediasAttributesConstraints.file.filename.required(),
+        mimetype: mediasAttributesConstraints.file.mimetype.required(),
+        encoding: mediasAttributesConstraints.file.encoding.required(),
+        size: mediasAttributesConstraints.file.size.required(),
+      }).required(),
+    } satisfies Record<keyof Omit<MediaServiceCreationAttributes, 'buffer'>, Joi.Schema>),
   },
 
   getAllForOrganization: {
@@ -67,6 +65,14 @@ const mediasValidationSchemas = {
         },
         duration: {
           validator: mediasAttributesConstraints.media.duration,
+          allowedOperations: nullableOperations,
+        },
+        width: {
+          validator: mediasAttributesConstraints.media.width,
+          allowedOperations: nullableOperations,
+        },
+        height: {
+          validator: mediasAttributesConstraints.media.height,
           allowedOperations: nullableOperations,
         },
         mimeType: {
@@ -129,12 +135,14 @@ const mediasValidationSchemas = {
     body: Joi.object().keys({
       name: mediasAttributesConstraints.media.name,
       notes: mediasAttributesConstraints.media.notes,
-      content: mediasAttributesConstraints.media.content,
       type: mediasAttributesConstraints.media.type,
-      duration: mediasAttributesConstraints.media.duration,
-      mimeType: mediasAttributesConstraints.media.mimeType,
-      size: mediasAttributesConstraints.media.size,
-    } satisfies Record<keyof MediaServiceUpdatableAttributes, Joi.Schema>),
+      mediaFile: Joi.object().keys({
+        filename: mediasAttributesConstraints.file.filename,
+        mimetype: mediasAttributesConstraints.file.mimetype,
+        encoding: mediasAttributesConstraints.file.encoding,
+        size: mediasAttributesConstraints.file.size,
+      }),
+    } satisfies Record<keyof Omit<MediaServiceUpdatableAttributes, 'buffer'>, Joi.Schema>),
   },
 
   deleteByIdForOrganization: {

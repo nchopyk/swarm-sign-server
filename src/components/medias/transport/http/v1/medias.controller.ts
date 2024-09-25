@@ -1,25 +1,18 @@
 import mediaService from '../../../service';
-import { MediaCreationAttributes, MediaServiceUpdatableAttributes } from '../../../service/medias.types';
+import { MediaServiceCreationAttributes, MediaServiceUpdatableAttributes } from '../../../service/medias.types';
 import { CollectionOptions } from '../../../../general/general.types';
 
 
 export class MediasController {
   create = async (req, res) => {
     const { organizationId } = req.params;
-    const { name, notes, content, type, duration, mimeType, size } = req.body;
 
-    const newVehicleData: MediaCreationAttributes = {
-      organizationId,
-      name,
-      notes,
-      content,
-      type,
-      duration,
-      mimeType,
-      size,
-    };
+    const { name, notes, type, mediaFile } = req.body;
+    const buffer = req.file;
 
-    const media = await mediaService.create(newVehicleData);
+    const newMediaData: MediaServiceCreationAttributes = { name, notes, type, mediaFile, buffer };
+
+    const media = await mediaService.create(organizationId, newMediaData);
 
     return res.status(200).send(media);
   };
@@ -44,10 +37,11 @@ export class MediasController {
 
   updateByIdForOrganization = async (req, res) => {
     const { organizationId, mediaId } = req.params;
-    const { name, notes, content, type, duration, mimeType, size } = req.body;
+    const { name, notes, type, mediaFile } = req.body;
+    const buffer = req.file;
 
-    const fieldsToUpdate: MediaServiceUpdatableAttributes = { name, notes, content, type, duration, mimeType, size };
-    const updatedMedia = await mediaService.updateByIdForOrganization({ organizationId, mediaId, fieldsToUpdate });
+    const fieldsToUpdate: MediaServiceUpdatableAttributes = { name, notes, type, mediaFile };
+    const updatedMedia = await mediaService.updateByIdForOrganization({ organizationId, mediaId, fieldsToUpdate, buffer });
 
     return res.status(200).send(updatedMedia);
   };

@@ -9,6 +9,7 @@ export const HOST = process.env.HOST;
 export const HTTP_PORT = process.env.HTTP_PORT ? parseInt(process.env.HTTP_PORT) : 5000;
 export const WS_PORT = process.env.WS_PORT ? parseInt(process.env.WS_PORT) : 5001;
 export const LOG_LEVEL = process.env.LOG_LEVEL;
+export const PUBLIC_SERVER_URL = process.env.PUBLIC_SERVER_URL;
 
 export const POSTGRES_DB = {
   HOST: process.env.POSTGRES_HOST,
@@ -37,6 +38,9 @@ export const JWT_CONFIG = {
   PASSWORD_RECOVERY_EXPIRES_IN: '1h',
 };
 
+export const MAX_FILE_SIZE = 50 * 1024 * 1024;
+export const STATIC_FOLDER_PATH = path.join(process.cwd(), 'static');
+
 
 export default {
   NODE_ENV,
@@ -46,8 +50,11 @@ export default {
   HOST,
   LOG_LEVEL,
   POSTGRES_DB,
+  PUBLIC_SERVER_URL,
   WS_CONNECTION_HEALTHCHECK_INTERVAL,
   PASSWORD_HASH_SALT,
   CHECKSUM_HASH_SALT,
   JWT_CONFIG,
+  STATIC_FOLDER_PATH,
+  MAX_FILE_SIZE,
 };

@@ -13,6 +13,8 @@ export async function up(knex: Knex): Promise<void> {
     table.enum('type', Object.values(MEDIA_TYPES), { useNative: true, enumName: 'media_type_enum', }).notNullable();
 
     table.integer('duration');
+    table.integer('width');
+    table.integer('height');
     table.string('mime_type').notNullable();
     table.integer('size');
 
@@ -30,5 +32,5 @@ export async function up(knex: Knex): Promise<void> {
 export async function down(knex: Knex): Promise<void> {
   await knex.raw('DROP TRIGGER change_updated_at_on_row_modification ON medias');
   await knex.schema.dropTable('medias');
-  await knex.raw('DROP TYPE sim_cards_state_enum');
+  await knex.raw('DROP TYPE media_type_enum');
 }

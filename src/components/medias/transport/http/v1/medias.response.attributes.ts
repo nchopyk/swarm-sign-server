@@ -9,6 +9,8 @@ export const media: ResponseAttributes<Omit<MediaModel, 'organizationId'>> = {
   content: { type: 'string' },
   type: { type: 'string' },
   duration: { type: 'number', nullable: true },
+  width: { type: 'number', nullable: true },
+  height: { type: 'number', nullable: true },
   mimeType: { type: 'string' },
   size: { type: 'number', nullable: true },
   createdAt: { type: 'string', format: 'date-time' },

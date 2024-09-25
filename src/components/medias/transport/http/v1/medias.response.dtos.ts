@@ -15,6 +15,8 @@ const detailedDTO = {
     content: mediasResponseAttributes.media.content,
     type: mediasResponseAttributes.media.type,
     duration: mediasResponseAttributes.media.duration,
+    width: mediasResponseAttributes.media.width,
+    height: mediasResponseAttributes.media.height,
     mimeType: mediasResponseAttributes.media.mimeType,
     size: mediasResponseAttributes.media.size,
     createdAt: mediasResponseAttributes.media.createdAt,
