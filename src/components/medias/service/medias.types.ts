@@ -46,12 +46,6 @@ export interface MediaProperties {
   duration: number | null;
 }
 
-
-// export interface MediaServiceCreationAttributes extends Omit<MediaModel, 'id' | 'createdAt' | 'updatedAt' | 'organizationId' | 'duration' | 'width' | 'height' | 'size' | 'content' | 'mimeType'> {
-//   file: UploadedFile;
-//   buffer: Buffer;
-// }
-
 export interface MediaServiceCreationAttributes extends Pick<MediaModel, 'name' | 'notes' | 'type'> {
   mediaFile: UploadedFile;
   buffer: Buffer;
