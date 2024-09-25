@@ -110,3 +110,6 @@ dist
 **/.DS_Store
 
 .npmrc
+
+# Static files
+.static/
