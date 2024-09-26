@@ -1,13 +1,15 @@
 import Joi from 'joi';
 import organizationAttributesConstraints from '../../../../organizations/service/organizations.attributes-constraints';
-import { PlaylistCreationAttributes, PlaylistDTO, PlaylistServiceUpdatableAttributes } from '../../../service/playlists.types';
 import playlistsAttributesConstraints from '../../../service/playlists.attributes-constraints';
 import collectionQueryParamsProcessor from '../../../../../modules/collection-query-processor';
-import { dateOperations, nullableOperations, stringOperations } from '../../../../../modules/collection-query-processor/filter/filter.operations';
 import generalAttributesConstraints from '../../../../general/general.attributes-constraints';
+import playlistsRepository from '../../../service/playlists.repository';
+import mediasAttributesConstraints from '../../../../medias/service/medias.attributes-constraints';
+import { dateOperations, nullableOperations, stringOperations } from '../../../../../modules/collection-query-processor/filter/filter.operations';
 import { FilterColumnConfig } from '../../../../../modules/collection-query-processor/filter/types';
 import { PrefixedOrganizationShortDTO } from '../../../../organizations/service/organizations.types';
-import playlistsRepository from '../../../service/playlists.repository';
+import { PlaylistServiceCreationAttributes, PlaylistDTO, PlaylistServiceUpdatableAttributes } from '../../../service/playlists.types';
+import { MediaId } from '../../../../medias/service/medias.types';
 
 
 const playlistsValidationSchemas = {
@@ -18,7 +20,8 @@ const playlistsValidationSchemas = {
     body: Joi.object().keys({
       name: playlistsAttributesConstraints.playlist.name.required(),
       notes: playlistsAttributesConstraints.playlist.notes.allow(null),
-    } satisfies Record<keyof Omit<PlaylistCreationAttributes, 'organizationId'>, Joi.Schema>),
+      medias: Joi.array().items(mediasAttributesConstraints.media.id).required(),
+    } satisfies Record<keyof Omit<PlaylistServiceCreationAttributes, 'medias'> & { medias: MediaId[] }, Joi.Schema>),
   },
 
   getAllForOrganization: {

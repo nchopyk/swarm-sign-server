@@ -1,15 +1,15 @@
 import playlistService from '../../../service';
-import { PlaylistCreationAttributes, PlaylistServiceUpdatableAttributes } from '../../../service/playlists.types';
+import { PlaylistServiceCreationAttributes, PlaylistServiceUpdatableAttributes } from '../../../service/playlists.types';
 import { CollectionOptions } from '../../../../general/general.types';
 
 
 export class PlaylistsController {
   create = async (req, res) => {
     const { organizationId } = req.params;
-    const { name, notes } = req.body;
+    const { name, notes, medias } = req.body;
 
-    const newVehicleData: PlaylistCreationAttributes = { organizationId, name, notes };
-    const playlist = await playlistService.create(newVehicleData);
+    const newPlaylistData: PlaylistServiceCreationAttributes = { organizationId, name, notes };
+    const playlist = await playlistService.create(newPlaylistData, medias);
 
     return res.status(200).send(playlist);
   };

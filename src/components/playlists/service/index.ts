@@ -3,27 +3,54 @@ import playlistsErrors from './playlists.errors';
 import organizationsRepository from '../../organizations/service/organizations.repository';
 import organizationsErrors from '../../organizations/service/organizations.errors';
 import playlistsRepository from './playlists.repository';
+import mediasRepository from '../../medias/service/medias.repository';
+import postgresDb from '../../../modules/postgres-db';
 import { calculatePagination, resolveSkipAndLimitFromPagination } from '../../../modules/collection-query-processor/pagination/pagination.resolver';
+import { DEFAULT_MEDIA_DURATION } from '../../medias/service/media.constants';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 import { Collection, CollectionOptions } from '../../general/general.types';
-import { GetPlaylistByIdFuncParams, PlaylistCreationAttributes, PlaylistDTO, PlaylistId, UpdateByIdForOrganizationFuncParams } from './playlists.types';
+import {
+  GetPlaylistByIdFuncParams,
+  PlaylistServiceCreationAttributes,
+  PlaylistDTO,
+  PlaylistId,
+  UpdateByIdForOrganizationFuncParams,
+} from './playlists.types';
+import { MediaId } from '../../medias/service/medias.types';
 
 
 class PlaylistsService {
-  public async create(newPlaylistData: PlaylistCreationAttributes) {
+  public async create(newPlaylistData: PlaylistServiceCreationAttributes, medias: MediaId[]): Promise<PlaylistDTO> {
     const organization = await organizationsRepository.getModelById(newPlaylistData.organizationId);
 
     if (!organization) {
       throw new Errors.BadRequest(organizationsErrors.withSuchIdNotFound({ organizationId: newPlaylistData.organizationId }));
     }
 
-    const newPlaylistId = await playlistsRepository.create(newPlaylistData);
+    const mediasModels = await mediasRepository.getModelsByIds(medias);
 
-    const newPlaylist = await playlistsRepository.getModelById(newPlaylistId);
+    const foundMediaIds = mediasModels.map((media) => media.id);
+    const notFoundMediaIds = medias.filter((mediaId) => !foundMediaIds.includes(mediaId));
 
-    if (!newPlaylist) {
-      throw new Errors.InternalError(playlistsErrors.notCreated({ playlistData: newPlaylistData }));
+    if (notFoundMediaIds.length) {
+      throw new Errors.BadRequest(playlistsErrors.mediasNotFound({ mediaIds: notFoundMediaIds }));
     }
+
+    const newPlaylistId = await postgresDb.getClient().transaction(async (trx) => {
+      const newPlaylistId = await playlistsRepository.create(newPlaylistData, trx);
+
+      for (const mediaModel of mediasModels) {
+        await playlistsRepository.createPlaylistMedia({
+          playlistId: newPlaylistId,
+          mediaId: mediaModel.id,
+          duration: mediaModel.duration || DEFAULT_MEDIA_DURATION,
+        }, trx);
+      }
+
+      return newPlaylistId;
+    });
+
+    const newPlaylist = await this.getByIdForOrganization({ organizationId: newPlaylistData.organizationId, playlistId: newPlaylistId });
 
     return newPlaylist;
   }

@@ -1,10 +1,17 @@
 import { OrganizationId, OrganizationShortDTO } from '../../organizations/service/organizations.types';
+import { MediaId } from '../../medias/service/medias.types';
+
 
 export type PlaylistId = string;
 export type PlaylistName = string;
 export type PlaylistNotes = string | null;
 export type PlaylistCreatedAt = Date;
 export type PlaylistUpdatedAt = Date;
+
+export type PlaylistMediaId = string;
+export type PlaylistMediaDuration = number;
+export type PlaylistMediaCreatedAt = Date;
+export type PlaylistMediaUpdatedAt = Date;
 
 
 /* --------------------------------- Playlist Model --------------------------------- */
@@ -18,10 +25,26 @@ export interface PlaylistModel {
 }
 
 
-export type PlaylistCreationAttributes = Omit<PlaylistModel, 'id' | 'createdAt' | 'updatedAt' | 'deviceId'>;
-export type PlaylistServiceUpdatableAttributes = Partial<Omit<PlaylistModel, 'id' | 'createdAt' | 'updatedAt' | 'organizationId' >>;
+export type PlaylistServiceCreationAttributes = Omit<PlaylistModel, 'id' | 'createdAt' | 'updatedAt'>;
+export type PlaylistRepositoryCreationAttributes = Omit<PlaylistModel, 'id' | 'createdAt' | 'updatedAt'>;
+
+export type PlaylistServiceUpdatableAttributes = Partial<Omit<PlaylistModel, 'id' | 'createdAt' | 'updatedAt' | 'organizationId'>>;
 export type PlaylistRepositoryUpdatableAttributes = Partial<Omit<PlaylistModel, 'id' | 'createdAt' | 'updatedAt' | 'organizationId'>>;
 /* --------------------------------- Playlist Model --------------------------------- */
+
+
+/* --------------------------------- Playlist Media Model --------------------------------- */
+export interface PlaylistMediaModel {
+  id: PlaylistMediaId;
+  playlistId: PlaylistId;
+  mediaId: MediaId;
+  duration: PlaylistMediaDuration;
+  createdAt: PlaylistMediaCreatedAt;
+  updatedAt: PlaylistMediaUpdatedAt;
+}
+
+export type PlaylistMediaRepositoryCreationAttributes = Omit<PlaylistMediaModel, 'id' | 'createdAt' | 'updatedAt'>;
+/* --------------------------------- Playlist Media Model --------------------------------- */
 
 
 /* --------------------------------- Playlist DTOs --------------------------------- */

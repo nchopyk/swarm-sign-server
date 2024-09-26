@@ -111,6 +111,13 @@ export class MediasRepository {
     return parseInt(result.count, 10);
   }
 
+  async getModelsByIds(ids: MediaId[]): Promise<MediaModel[]> {
+    return this.postgresClient
+      .select(this.mediaModelToTableColumnMap)
+      .from('medias')
+      .whereIn('id', ids);
+  }
+
   async update(mediaId: MediaId, fieldsToUpdate: MediaRepositoryUpdatableAttributes, trx?: Knex.Transaction): Promise<void> {
     const columns = convertFieldsToColumns(fieldsToUpdate, this.mediaModelToTableColumnMap);
 

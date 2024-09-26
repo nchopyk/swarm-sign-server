@@ -5,12 +5,12 @@ import { Knex } from 'knex';
 import { CollectionRepositoryOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
 import {
   PlaylistModel,
-  PlaylistCreationAttributes,
+  PlaylistRepositoryCreationAttributes,
   PlaylistId,
   PlaylistDTO,
   PlaylistRepositoryUpdatableAttributes,
   GetDTOByIdForOrganizationFuncParams,
-  GetModelByIdForOrganizationFuncParams
+  GetModelByIdForOrganizationFuncParams, PlaylistMediaModel, PlaylistMediaRepositoryCreationAttributes
 } from './playlists.types';
 import { addTablePrefixToColumns, convertFieldsToColumns } from '../../general/utils/general.repository.utils';
 import { OrganizationId, OrganizationModel } from '../../organizations/service/organizations.types';
@@ -28,6 +28,15 @@ export class PlaylistsRepository {
     updatedAt: 'updated_at',
   };
 
+  public readonly playlistMediaModelToTableColumnMap: ModelToColumnsMapping<PlaylistMediaModel> = {
+    id: 'id',
+    playlistId: 'playlist_id',
+    mediaId: 'media_id',
+    duration: 'duration',
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+  };
+
   public readonly playlistModelToPrefixedColumnsColumnMap = addTablePrefixToColumns(this.playlistModelToTableColumnMap, 'playlist');
 
   public readonly playlistDTOColumnMap: ModelToPrefixedColumnsMapping = {
@@ -39,7 +48,7 @@ export class PlaylistsRepository {
     this.postgresClient = postgresClient;
   }
 
-  async create(newPlaylistData: PlaylistCreationAttributes, trx?: Knex.Transaction): Promise<PlaylistId> {
+  async create(newPlaylistData: PlaylistRepositoryCreationAttributes, trx?: Knex.Transaction): Promise<PlaylistId> {
     const id = crypto.randomUUID();
     const columns = convertFieldsToColumns({ ...newPlaylistData, id }, this.playlistModelToTableColumnMap);
 
@@ -48,6 +57,20 @@ export class PlaylistsRepository {
       .into('playlists');
 
     return id;
+  }
+
+  async createPlaylistMedia(newPlaylistMediaData: PlaylistMediaRepositoryCreationAttributes, trx?: Knex.Transaction): Promise<void> {
+    const id = crypto.randomUUID();
+
+    const columns = convertFieldsToColumns({
+      ...newPlaylistMediaData,
+      id,
+    }, this.playlistMediaModelToTableColumnMap);
+
+
+    await (trx || this.postgresClient)
+      .insert(columns)
+      .into('playlists_medias');
   }
 
   async getModelById(id: PlaylistId, trx?: Knex.Transaction): Promise<PlaylistModel | null> {
@@ -125,6 +148,8 @@ export class PlaylistsRepository {
       .from('playlists')
       .where('id', playlistId);
   }
+
+
 
   public toPlaylistDTO(playlistRows: PlaylistModel): PlaylistDTO {
     const playlistModel = {} as PlaylistModel;
