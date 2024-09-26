@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { PlaylistModel } from './playlists.types';
+import { PlaylistModel, PlaylistMediaModel } from './playlists.types';
 
 
 const playlist: Record<keyof Omit<PlaylistModel, 'organizationId'>, Joi.Schema> = {
@@ -10,7 +10,14 @@ const playlist: Record<keyof Omit<PlaylistModel, 'organizationId'>, Joi.Schema> 
   updatedAt: Joi.date().iso(),
 };
 
+const playlistMedias: Record<keyof Omit<PlaylistMediaModel, 'playlistId' | 'mediaId'>, Joi.Schema> = {
+  id: Joi.string().uuid(),
+  duration: Joi.number().integer().min(0),
+  createdAt: Joi.date().iso(),
+  updatedAt: Joi.date().iso(),
+};
 
 export default {
   playlist,
+  playlistMedias,
 };

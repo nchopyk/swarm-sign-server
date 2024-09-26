@@ -91,13 +91,6 @@ const playlistsValidationSchemas = {
     }),
   },
 
-  getPlaylistMedias: {
-    params: Joi.object().keys({
-      organizationId: organizationAttributesConstraints.organization.id.required(),
-      playlistId: playlistsAttributesConstraints.playlist.id.required(),
-    }),
-  },
-
   updateByIdForOrganization: {
     params: Joi.object().keys({
       organizationId: organizationAttributesConstraints.organization.id.required(),
@@ -116,14 +109,32 @@ const playlistsValidationSchemas = {
     }),
   },
 
-  activate: {
+  getPlaylistMedias: {
     params: Joi.object().keys({
       organizationId: organizationAttributesConstraints.organization.id.required(),
-    }),
-    body: Joi.object().keys({
-      code: Joi.string().required(),
+      playlistId: playlistsAttributesConstraints.playlist.id.required(),
     }),
   },
+
+  addPlaylistMedias: {
+    params: Joi.object().keys({
+      organizationId: organizationAttributesConstraints.organization.id.required(),
+      playlistId: playlistsAttributesConstraints.playlist.id.required(),
+    }),
+    body: Joi.object().keys({
+      medias: Joi.array().items(mediasAttributesConstraints.media.id).required(),
+    } satisfies Record<'medias', Joi.ArraySchema>),
+  },
+
+  removePlaylistMedias: {
+    params: Joi.object().keys({
+      organizationId: organizationAttributesConstraints.organization.id.required(),
+      playlistId: playlistsAttributesConstraints.playlist.id.required(),
+    }),
+    body: Joi.object().keys({
+      playlistMedias: Joi.array().items(playlistsAttributesConstraints.playlistMedias.id).required(),
+    } satisfies Record<'playlistMedias', Joi.ArraySchema>),
+  }
 };
 
 export default playlistsValidationSchemas;

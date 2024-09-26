@@ -24,6 +24,14 @@ const playlistsValidationSchemas = {
   deleteByIdForOrganization: {
     200: playlistsDTOs.deletedSuccessfullyResponseDTO,
   },
+
+  addPlaylistMedias: {
+    200: playlistsDTOs.playlistMediasCollectionDTO,
+  },
+
+  removePlaylistMedias: {
+    200: playlistsDTOs.playlistMediasCollectionDTO,
+  }
 };
 
 export default playlistsValidationSchemas;

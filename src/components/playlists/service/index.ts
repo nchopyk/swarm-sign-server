@@ -15,6 +15,7 @@ import {
   PlaylistId,
   UpdateByIdForOrganizationFuncParams,
   PlaylistMediaDTO,
+  PlaylistMediaId,
 } from './playlists.types';
 import { MediaId } from '../../medias/service/medias.types';
 
@@ -80,20 +81,6 @@ class PlaylistsService {
     return playlist;
   }
 
-  public async getPlaylistMedias({ organizationId, playlistId }: GetPlaylistByIdFuncParams): Promise<Collection<PlaylistMediaDTO>> {
-    const playlist = await playlistsRepository.getModelByIdForOrganization({ organizationId, playlistId });
-
-    if (!playlist) {
-      throw new Errors.NotFoundError(playlistsErrors.withSuchIdNotFound({ playlistId }));
-    }
-
-    const mediasDTOs = await playlistsRepository.getAllPlaylistMediasDTOs(playlistId);
-
-    return {
-      data: mediasDTOs,
-    };
-  }
-
   public async updateByIdForOrganization({ organizationId, playlistId, fieldsToUpdate }: UpdateByIdForOrganizationFuncParams) {
     const playlist = await playlistsRepository.getModelByIdForOrganization({ playlistId, organizationId });
 
@@ -120,6 +107,78 @@ class PlaylistsService {
     }
 
     await playlistsRepository.delete(playlistId);
+  }
+
+  public async getPlaylistMedias({ organizationId, playlistId }: GetPlaylistByIdFuncParams): Promise<Collection<PlaylistMediaDTO>> {
+    const playlist = await playlistsRepository.getModelByIdForOrganization({ organizationId, playlistId });
+
+    if (!playlist) {
+      throw new Errors.NotFoundError(playlistsErrors.withSuchIdNotFound({ playlistId }));
+    }
+
+    const mediasDTOs = await playlistsRepository.getAllPlaylistMediasDTOs(playlistId);
+
+    return {
+      data: mediasDTOs,
+    };
+  }
+
+  public async addPlaylistMedias({ organizationId, playlistId, medias }: { organizationId: OrganizationId; playlistId: PlaylistId; medias: MediaId[] }) {
+    const playlist = await playlistsRepository.getModelByIdForOrganization({ organizationId, playlistId });
+
+    if (!playlist) {
+      throw new Errors.NotFoundError(playlistsErrors.withSuchIdNotFound({ playlistId }));
+    }
+
+    const mediasModels = await mediasRepository.getModelsByIds(medias);
+
+    const foundMediaIds = mediasModels.map((media) => media.id);
+    const notFoundMediaIds = medias.filter((mediaId) => !foundMediaIds.includes(mediaId));
+
+    if (notFoundMediaIds.length) {
+      throw new Errors.BadRequest(playlistsErrors.mediasNotFound({ mediaIds: notFoundMediaIds }));
+    }
+
+    await postgresDb.getClient().transaction(async (trx) => {
+      for (const mediaModel of mediasModels) {
+        await playlistsRepository.createPlaylistMedia({
+          playlistId,
+          mediaId: mediaModel.id,
+          duration: mediaModel.duration || DEFAULT_MEDIA_DURATION,
+        }, trx);
+      }
+    });
+
+    return this.getPlaylistMedias({ organizationId, playlistId });
+  }
+
+  public async removePlaylistMedias({ organizationId, playlistId, playlistMedias }: {
+    organizationId: OrganizationId;
+    playlistId: PlaylistId;
+    playlistMedias: PlaylistMediaId[]
+  }) {
+    const playlist = await playlistsRepository.getModelByIdForOrganization({ organizationId, playlistId });
+
+    if (!playlist) {
+      throw new Errors.NotFoundError(playlistsErrors.withSuchIdNotFound({ playlistId }));
+    }
+
+    const playlistMediasModels = await playlistsRepository.getPlaylistMediasModelsByIds(playlistMedias);
+
+    const foundPlaylistMediaIds = playlistMediasModels.map((playlistMedia) => playlistMedia.id);
+    const notFoundPlaylistMediaIds = playlistMedias.filter((playlistMediaId) => !foundPlaylistMediaIds.includes(playlistMediaId));
+
+    if (notFoundPlaylistMediaIds.length) {
+      throw new Errors.BadRequest(playlistsErrors.playlistMediasNotFound({ playlistMediaIds: notFoundPlaylistMediaIds }));
+    }
+
+    await postgresDb.getClient().transaction(async (trx) => {
+      for (const playlistMediaModel of playlistMediasModels) {
+        await playlistsRepository.deletePlaylistMedia(playlistMediaModel.id, trx);
+      }
+    });
+
+    return this.getPlaylistMedias({ organizationId, playlistId });
   }
 }
 

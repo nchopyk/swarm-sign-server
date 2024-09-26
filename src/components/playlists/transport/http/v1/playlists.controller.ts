@@ -32,14 +32,6 @@ export class PlaylistsController {
     return res.status(200).send(playlist);
   };
 
-  getPlaylistMedias = async (req, res) => {
-    const { organizationId, playlistId } = req.params;
-
-    const medias = await playlistService.getPlaylistMedias({ organizationId, playlistId });
-
-    return res.status(200).send(medias);
-  };
-
   updateByIdForOrganization = async (req, res) => {
     const { organizationId, playlistId } = req.params;
     const { name, notes } = req.body;
@@ -56,6 +48,32 @@ export class PlaylistsController {
     await playlistService.deleteByIdForOrganization({ organizationId, playlistId });
 
     return res.status(200).send({ message: 'Playlist deleted successfully.' });
+  };
+
+  getPlaylistMedias = async (req, res) => {
+    const { organizationId, playlistId } = req.params;
+
+    const medias = await playlistService.getPlaylistMedias({ organizationId, playlistId });
+
+    return res.status(200).send(medias);
+  };
+
+  addPlaylistMedias = async (req, res) => {
+    const { organizationId, playlistId } = req.params;
+    const { medias } = req.body;
+
+    const updatedPlaylist = await playlistService.addPlaylistMedias({ organizationId, playlistId, medias });
+
+    return res.status(200).send(updatedPlaylist);
+  };
+
+  removePlaylistMedias = async (req, res) => {
+    const { organizationId, playlistId } = req.params;
+    const { playlistMedias } = req.body;
+
+    const updatedPlaylist = await playlistService.removePlaylistMedias({ organizationId, playlistId, playlistMedias });
+
+    return res.status(200).send(updatedPlaylist);
   };
 }
 

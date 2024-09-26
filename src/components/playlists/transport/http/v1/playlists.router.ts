@@ -36,14 +36,6 @@ const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPl
     },
   }, controller.getByIdForOrganization);
 
-  fastify.get('organizations/:organizationId/playlists/:playlistId/medias', {
-    preHandler: organizationsRoleAccessControlHook(Object.values(ORGANIZATION_ROLES)),
-    schema: {
-      params: playlistsValidationSchemas.getPlaylistMedias.params,
-      response: transmittersTransmittersValidationSchemas.getPlaylistMedias,
-    },
-  }, controller.getPlaylistMedias);
-
   fastify.patch('organizations/:organizationId/playlists/:playlistId', {
     preHandler: organizationsRoleAccessControlHook([ORGANIZATION_ROLES.OWNER, ORGANIZATION_ROLES.ADMIN]),
     schema: {
@@ -60,6 +52,32 @@ const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPl
       response: transmittersTransmittersValidationSchemas.deleteByIdForOrganization,
     },
   }, controller.deleteByIdForOrganization);
+
+  fastify.get('organizations/:organizationId/playlists/:playlistId/medias', {
+    preHandler: organizationsRoleAccessControlHook(Object.values(ORGANIZATION_ROLES)),
+    schema: {
+      params: playlistsValidationSchemas.getPlaylistMedias.params,
+      response: transmittersTransmittersValidationSchemas.getPlaylistMedias,
+    },
+  }, controller.getPlaylistMedias);
+
+  fastify.post('organizations/:organizationId/playlists/:playlistId/medias/add', {
+    preHandler: organizationsRoleAccessControlHook(Object.values(ORGANIZATION_ROLES)),
+    schema: {
+      params: playlistsValidationSchemas.addPlaylistMedias.params,
+      body: playlistsValidationSchemas.addPlaylistMedias.body,
+      response: transmittersTransmittersValidationSchemas.addPlaylistMedias,
+    },
+  }, controller.addPlaylistMedias);
+
+  fastify.post('organizations/:organizationId/playlists/:playlistId/medias/remove', {
+    preHandler: organizationsRoleAccessControlHook(Object.values(ORGANIZATION_ROLES)),
+    schema: {
+      params: playlistsValidationSchemas.removePlaylistMedias.params,
+      body: playlistsValidationSchemas.removePlaylistMedias.body,
+      response: transmittersTransmittersValidationSchemas.removePlaylistMedias,
+    },
+  }, controller.removePlaylistMedias);
 
   done();
 };

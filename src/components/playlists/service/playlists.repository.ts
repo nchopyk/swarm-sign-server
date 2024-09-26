@@ -16,7 +16,7 @@ import {
   PlaylistDTO,
   PlaylistRepositoryUpdatableAttributes,
   GetDTOByIdForOrganizationFuncParams,
-  GetModelByIdForOrganizationFuncParams, PlaylistMediaModel, PlaylistMediaRepositoryCreationAttributes, PlaylistMediaDTO
+  GetModelByIdForOrganizationFuncParams, PlaylistMediaModel, PlaylistMediaRepositoryCreationAttributes, PlaylistMediaDTO, PlaylistMediaId
 } from './playlists.types';
 
 
@@ -165,7 +165,19 @@ export class PlaylistsRepository {
       .where('id', playlistId);
   }
 
+  async getPlaylistMediasModelsByIds(playlistMediaIds: PlaylistMediaId[]): Promise<PlaylistMediaModel[]> {
+    return this.postgresClient
+      .select(this.playlistMediaModelToTableColumnMap)
+      .from('playlists_medias')
+      .whereIn('id', playlistMediaIds);
+  }
 
+  async deletePlaylistMedia(playlistMediaId: PlaylistMediaId, trx?: Knex.Transaction): Promise<void> {
+    await (trx || this.postgresClient)
+      .delete()
+      .from('playlists_medias')
+      .where('id', playlistMediaId);
+  }
 
   public toPlaylistDTO(playlistRows: PlaylistModel): PlaylistDTO {
     const playlistModel = {} as PlaylistModel;
