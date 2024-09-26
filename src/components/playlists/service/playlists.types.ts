@@ -1,5 +1,5 @@
 import { OrganizationId, OrganizationShortDTO } from '../../organizations/service/organizations.types';
-import { MediaId } from '../../medias/service/medias.types';
+import { MediaId, MediaModel } from '../../medias/service/medias.types';
 
 
 export type PlaylistId = string;
@@ -33,6 +33,14 @@ export type PlaylistRepositoryUpdatableAttributes = Partial<Omit<PlaylistModel, 
 /* --------------------------------- Playlist Model --------------------------------- */
 
 
+/* --------------------------------- Playlist DTOs --------------------------------- */
+export interface PlaylistDTO extends Omit<PlaylistModel, 'organizationId'> {
+  organization: OrganizationShortDTO;
+}
+
+/* --------------------------------- Playlist DTOs --------------------------------- */
+
+
 /* --------------------------------- Playlist Media Model --------------------------------- */
 export interface PlaylistMediaModel {
   id: PlaylistMediaId;
@@ -47,12 +55,12 @@ export type PlaylistMediaRepositoryCreationAttributes = Omit<PlaylistMediaModel,
 /* --------------------------------- Playlist Media Model --------------------------------- */
 
 
-/* --------------------------------- Playlist DTOs --------------------------------- */
-export interface PlaylistDTO extends Omit<PlaylistModel, 'organizationId'> {
-  organization: OrganizationShortDTO;
+/* --------------------------------- Playlist Media DTO --------------------------------- */
+export interface PlaylistMediaDTO extends Omit<PlaylistMediaModel, 'mediaId' | 'playlistId'> {
+  media: MediaModel;
 }
 
-/* --------------------------------- Playlist DTOs --------------------------------- */
+/* --------------------------------- Playlist Media DTO --------------------------------- */
 
 
 /* --------------------------------- Func Params --------------------------------- */

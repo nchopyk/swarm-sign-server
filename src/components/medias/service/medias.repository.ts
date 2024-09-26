@@ -34,6 +34,7 @@ export class MediasRepository {
   };
 
   public readonly mediaModelToPrefixedColumnsColumnMap = addTablePrefixToColumns(this.mediaModelToTableColumnMap, 'media');
+  public readonly mediaModelToPrefixedColumnsColumnMapWithAliases = addTablePrefixToColumns(this.mediaModelToTableColumnMap, 'media', { includePrefixInAliases: true });
 
   public readonly mediaDTOColumnMap: ModelToPrefixedColumnsMapping = {
     ...this.mediaModelToPrefixedColumnsColumnMap,

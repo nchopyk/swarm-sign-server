@@ -36,6 +36,14 @@ const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPl
     },
   }, controller.getByIdForOrganization);
 
+  fastify.get('organizations/:organizationId/playlists/:playlistId/medias', {
+    preHandler: organizationsRoleAccessControlHook(Object.values(ORGANIZATION_ROLES)),
+    schema: {
+      params: playlistsValidationSchemas.getPlaylistMedias.params,
+      response: transmittersTransmittersValidationSchemas.getPlaylistMedias,
+    },
+  }, controller.getPlaylistMedias);
+
   fastify.patch('organizations/:organizationId/playlists/:playlistId', {
     preHandler: organizationsRoleAccessControlHook([ORGANIZATION_ROLES.OWNER, ORGANIZATION_ROLES.ADMIN]),
     schema: {

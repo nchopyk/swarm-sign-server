@@ -95,6 +95,13 @@ const playlistsValidationSchemas = {
     }),
   },
 
+  getPlaylistMedias: {
+    params: Joi.object().keys({
+      organizationId: organizationAttributesConstraints.organization.id.required(),
+      playlistId: playlistsAttributesConstraints.playlist.id.required(),
+    }),
+  },
+
   updateByIdForOrganization: {
     params: Joi.object().keys({
       organizationId: organizationAttributesConstraints.organization.id.required(),

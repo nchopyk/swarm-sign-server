@@ -1,5 +1,6 @@
 import postgresClient from '../../../modules/postgres-db';
 import organizationsRepository from '../../organizations/service/organizations.repository';
+import mediasRepository from '../../medias/service/medias.repository';
 import crypto from 'node:crypto';
 import { Knex } from 'knex';
 import { CollectionRepositoryOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
@@ -10,12 +11,13 @@ import {
   PlaylistDTO,
   PlaylistRepositoryUpdatableAttributes,
   GetDTOByIdForOrganizationFuncParams,
-  GetModelByIdForOrganizationFuncParams, PlaylistMediaModel, PlaylistMediaRepositoryCreationAttributes
+  GetModelByIdForOrganizationFuncParams, PlaylistMediaModel, PlaylistMediaRepositoryCreationAttributes, PlaylistMediaDTO
 } from './playlists.types';
 import { addTablePrefixToColumns, convertFieldsToColumns } from '../../general/utils/general.repository.utils';
 import { OrganizationId, OrganizationModel } from '../../organizations/service/organizations.types';
 import { convertModelSortRulesToTableSortRules } from '../../../modules/collection-query-processor/sort/sort.rules-converters';
 import { convertFiltersToQueryCondition } from '../../../modules/collection-query-processor/filter/filter.knex-condition-builder';
+import { MediaModel } from '../../medias/service/medias.types';
 
 
 export class PlaylistsRepository {
@@ -38,10 +40,16 @@ export class PlaylistsRepository {
   };
 
   public readonly playlistModelToPrefixedColumnsColumnMap = addTablePrefixToColumns(this.playlistModelToTableColumnMap, 'playlist');
+  public readonly playlistMediaModelToPrefixedColumnsColumnMap = addTablePrefixToColumns(this.playlistMediaModelToTableColumnMap, 'playlistMedia');
 
   public readonly playlistDTOColumnMap: ModelToPrefixedColumnsMapping = {
     ...this.playlistModelToPrefixedColumnsColumnMap,
     ...organizationsRepository.organizationsModelToPrefixedColumnsMapWithAliases,
+  };
+
+  public readonly playlistMediaDTOColumnMap: ModelToPrefixedColumnsMapping = {
+    ...this.playlistMediaModelToPrefixedColumnsColumnMap,
+    ...mediasRepository.mediaModelToPrefixedColumnsColumnMapWithAliases,
   };
 
   constructor(private postgresClient: Knex) {
@@ -129,6 +137,16 @@ export class PlaylistsRepository {
     return parseInt(result.count, 10);
   }
 
+  async getAllPlaylistMediasDTOs(playlistId: PlaylistId): Promise<PlaylistMediaDTO[]> {
+    const rows = await this.postgresClient
+      .select(this.playlistMediaDTOColumnMap)
+      .from('playlists_medias as playlistMedia')
+      .join('medias as media', 'playlistMedia.media_id', 'media.id')
+      .where('playlistMedia.playlist_id', playlistId);
+
+    return rows.map((row) => this.toPlaylistMediaDTO(row));
+  }
+
   async update(playlistId: PlaylistId, fieldsToUpdate: PlaylistRepositoryUpdatableAttributes, trx?: Knex.Transaction): Promise<void> {
     const columns = convertFieldsToColumns(fieldsToUpdate, this.playlistModelToTableColumnMap);
 
@@ -169,6 +187,27 @@ export class PlaylistsRepository {
     return {
       ...playlistModel,
       organization: organizationModel,
+    };
+  }
+
+  public toPlaylistMediaDTO(playlistRows: PlaylistModel): PlaylistMediaDTO {
+    const playlistMediaModel = {} as PlaylistMediaModel;
+    const mediaModel = {} as MediaModel;
+
+    for (const [key, value] of Object.entries(playlistRows)) {
+      const [table, column] = key.split('.');
+
+      if (table && !column) {
+        // table is the column name
+        playlistMediaModel[table] = value;
+      } else if (table === 'media') {
+        mediaModel[column] = value;
+      }
+    }
+
+    return {
+      ...playlistMediaModel,
+      media: mediaModel,
     };
   }
 }

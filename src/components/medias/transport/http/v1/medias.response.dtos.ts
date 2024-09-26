@@ -1,8 +1,9 @@
 import mediasResponseAttributes from './medias.response.attributes';
 import organizationsResponseDtos from '../../../../organizations/transport/http/v1/organizations.response.dtos';
+import organizationsResponseAttributes from '../../../../organizations/transport/http/v1/organizations.response.attributes';
 import { paginationDTO } from '../../../../general/general.response.dto';
 import { CollectionResource, DTOResource } from '../../../../general/general.types';
-import { MediaDTO } from '../../../service/medias.types';
+import { MediaDTO, MediaShortDTO } from '../../../service/medias.types';
 
 
 const detailedDTO = {
@@ -23,6 +24,26 @@ const detailedDTO = {
     updatedAt: mediasResponseAttributes.media.updatedAt,
     organization: organizationsResponseDtos.shortDTO,
   } satisfies DTOResource<MediaDTO>,
+};
+
+const shortDTO = {
+  type: 'object',
+  properties: {
+    resourceType: { type: 'string', default: 'media.short' },
+    id: mediasResponseAttributes.media.id,
+    organizationId: organizationsResponseAttributes.organization.id,
+    name: mediasResponseAttributes.media.name,
+    notes: mediasResponseAttributes.media.notes,
+    content: mediasResponseAttributes.media.content,
+    type: mediasResponseAttributes.media.type,
+    duration: mediasResponseAttributes.media.duration,
+    width: mediasResponseAttributes.media.width,
+    height: mediasResponseAttributes.media.height,
+    mimeType: mediasResponseAttributes.media.mimeType,
+    size: mediasResponseAttributes.media.size,
+    createdAt: mediasResponseAttributes.media.createdAt,
+    updatedAt: mediasResponseAttributes.media.updatedAt,
+  } satisfies DTOResource<MediaShortDTO>,
 };
 
 const listDTO = {
@@ -51,6 +72,7 @@ const deletedSuccessfullyResponseDTO = {
 
 export default {
   detailedDTO,
+  shortDTO,
   collectionDTO,
   deletedSuccessfullyResponseDTO,
 };

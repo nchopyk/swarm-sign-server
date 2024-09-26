@@ -1,8 +1,9 @@
 import { CollectionResource, DTOResource } from '../../../../general/general.types';
-import { PlaylistDTO } from '../../../service/playlists.types';
+import { PlaylistDTO, PlaylistMediaDTO } from '../../../service/playlists.types';
 import playlistsResponseAttributes from './playlists.response.attributes';
 import organizationsResponseDtos from '../../../../organizations/transport/http/v1/organizations.response.dtos';
 import { paginationDTO } from '../../../../general/general.response.dto';
+import mediasResponseDtos from '../../../../medias/transport/http/v1/medias.response.dtos';
 
 const detailedDTO = {
   type: 'object',
@@ -32,14 +33,6 @@ const collectionDTO = {
   }  satisfies DTOResource<CollectionResource<PlaylistDTO>>,
 };
 
-const activatedSuccessfullyResponseDTO = {
-  type: 'object',
-  properties: {
-    resourceType: { type: 'string', default: 'playlist.activation.success' },
-    message: { type: 'string' },
-  } satisfies DTOResource<{ message: string }>,
-};
-
 const deletedSuccessfullyResponseDTO = {
   type: 'object',
   properties: {
@@ -48,10 +41,37 @@ const deletedSuccessfullyResponseDTO = {
   } satisfies DTOResource<{ message: string }>,
 };
 
+const playlistMediaDetailedDTO = {
+  type: 'object',
+  properties: {
+    resourceType: { type: 'string', default: 'playlist.media.detail' },
+    id: playlistsResponseAttributes.playlistMedia.id,
+    duration: playlistsResponseAttributes.playlistMedia.duration,
+    createdAt: playlistsResponseAttributes.playlistMedia.createdAt,
+    updatedAt: playlistsResponseAttributes.playlistMedia.updatedAt,
+    media: mediasResponseDtos.shortDTO,
+  } satisfies DTOResource<PlaylistMediaDTO>,
+};
+
+const playlistMediaListDTO = {
+  type: 'array',
+  items: playlistMediaDetailedDTO,
+};
+
+const playlistMediasCollectionDTO = {
+  type: 'object',
+  properties: {
+    resourceType: { type: 'string', default: 'collection' },
+    dataType: { type: 'string', default: playlistMediaDetailedDTO.properties.resourceType.default },
+    data: playlistMediaListDTO,
+    meta: paginationDTO,
+  }  satisfies DTOResource<CollectionResource<PlaylistMediaDTO>>,
+};
 
 export default {
   detailedDTO,
   collectionDTO,
-  activatedSuccessfullyResponseDTO,
   deletedSuccessfullyResponseDTO,
+  playlistMediaDetailedDTO,
+  playlistMediasCollectionDTO,
 };

@@ -1,25 +1,29 @@
-import screensDTOs from './playlists.response.dtos';
+import playlistsDTOs from './playlists.response.dtos';
 
-const screensValidationSchemas = {
+const playlistsValidationSchemas = {
   create: {
-    200: screensDTOs.detailedDTO,
+    200: playlistsDTOs.detailedDTO,
   },
 
   getAllForOrganization: {
-    200: screensDTOs.collectionDTO,
+    200: playlistsDTOs.collectionDTO,
   },
 
   getByIdForOrganization: {
-    200: screensDTOs.detailedDTO,
+    200: playlistsDTOs.detailedDTO,
+  },
+
+  getPlaylistMedias: {
+    200: playlistsDTOs.playlistMediasCollectionDTO,
   },
 
   updateByIdForOrganization: {
-    200: screensDTOs.detailedDTO,
+    200: playlistsDTOs.detailedDTO,
   },
 
   deleteByIdForOrganization: {
-    200: screensDTOs.deletedSuccessfullyResponseDTO,
+    200: playlistsDTOs.deletedSuccessfullyResponseDTO,
   },
 };
 
-export default screensValidationSchemas;
+export default playlistsValidationSchemas;

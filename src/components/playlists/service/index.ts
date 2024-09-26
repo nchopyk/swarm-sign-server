@@ -15,6 +15,7 @@ import {
   PlaylistDTO,
   PlaylistId,
   UpdateByIdForOrganizationFuncParams,
+  PlaylistMediaDTO,
 } from './playlists.types';
 import { MediaId } from '../../medias/service/medias.types';
 
@@ -85,6 +86,21 @@ class PlaylistsService {
     }
 
     return playlist;
+  }
+
+  public async getPlaylistMedias({ organizationId, playlistId }: GetPlaylistByIdFuncParams): Promise<Collection<PlaylistMediaDTO>> {
+    const playlist = await playlistsRepository.getModelByIdForOrganization({ organizationId, playlistId });
+
+    if (!playlist) {
+      throw new Errors.NotFoundError(playlistsErrors.withSuchIdNotFound({ playlistId }));
+    }
+
+    const mediasDTOs = await playlistsRepository.getAllPlaylistMediasDTOs(playlistId);
+
+    return {
+      data: mediasDTOs,
+      meta: { currentPage: 1, lastPage: 1, pageSize: mediasDTOs.length, total: mediasDTOs.length, from: 1, to: mediasDTOs.length },
+    };
   }
 
   public async updateByIdForOrganization({ organizationId, playlistId, fieldsToUpdate }: UpdateByIdForOrganizationFuncParams) {

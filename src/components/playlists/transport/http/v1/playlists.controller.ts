@@ -32,6 +32,14 @@ export class PlaylistsController {
     return res.status(200).send(playlist);
   };
 
+  getPlaylistMedias = async (req, res) => {
+    const { organizationId, playlistId } = req.params;
+
+    const medias = await playlistService.getPlaylistMedias({ organizationId, playlistId });
+
+    return res.status(200).send(medias);
+  };
+
   updateByIdForOrganization = async (req, res) => {
     const { organizationId, playlistId } = req.params;
     const { name, notes } = req.body;

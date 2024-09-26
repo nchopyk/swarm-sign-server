@@ -62,6 +62,7 @@ export type MediaRepositoryUpdatableAttributes = Partial<Omit<MediaModel, 'id' |
 export interface MediaDTO extends Omit<MediaModel, 'organizationId'> {
   organization: OrganizationShortDTO;
 }
+export type MediaShortDTO = MediaModel;
 
 /* --------------------------------- Media DTOs --------------------------------- */
 
