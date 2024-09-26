@@ -5,9 +5,9 @@ import { CollectionOptions } from '../../../../general/general.types';
 export class OrganizationsMembersController {
   getAllMembers = async (req, res) => {
     const { organizationId } = req.params;
-    const { sort, page, where } = req.query;
+    const { sort, where } = req.query;
 
-    const collectionOptions: CollectionOptions = { sort, page, where };
+    const collectionOptions: CollectionOptions = { sort, where };
     const members = await organizationsService.getAllMembers(organizationId, collectionOptions);
 
     return res.send(members);

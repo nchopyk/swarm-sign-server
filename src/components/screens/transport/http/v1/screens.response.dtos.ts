@@ -2,7 +2,7 @@ import { CollectionResource, DTOResource } from '../../../../general/general.typ
 import { ScreenDTO } from '../../../service/screens.types';
 import screensResponseAttributes from './screens.response.attributes';
 import organizationsResponseDtos from '../../../../organizations/transport/http/v1/organizations.response.dtos';
-import { paginationDTO } from '../../../../general/general.response.dto';
+
 
 const detailedDTO = {
   type: 'object',
@@ -30,7 +30,6 @@ const collectionDTO = {
     resourceType: { type: 'string', default: 'collection' },
     dataType: { type: 'string', default: detailedDTO.properties.resourceType.default },
     data: listDTO,
-    meta: paginationDTO,
   }  satisfies DTOResource<CollectionResource<ScreenDTO>>,
 };
 

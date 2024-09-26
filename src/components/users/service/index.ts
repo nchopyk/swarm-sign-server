@@ -13,7 +13,6 @@ import { ACTIONS, SECTIONS, STATUSES } from '../../../constants/user-activity';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 import { comparePasswords, hashPassword } from '../../general/utils/general.hash.utils';
 import { Collection, CollectionOptions } from '../../general/general.types';
-import { calculatePagination, resolveSkipAndLimitFromPagination } from '../../../modules/collection-query-processor/pagination/pagination.resolver';
 import {
   CreateOrganizationFunctionParams,
   JWTAuthTokenPayload,
@@ -201,21 +200,16 @@ export class UsersService {
   }
 
   async getAllUserOrganizationsWithPagination(userId: UserId, collectionOptions: CollectionOptions): Promise<Collection<UserOrganizationRelationModel>> {
-    const [user, total] = await Promise.all([usersRepository.getModelById(userId), usersRepository.getAllUserOrganizationsTotalCount(userId, collectionOptions.where)]);
+    const user = await usersRepository.getModelById(userId);
 
     if (!user) {
       throw new Errors.NotFoundError(usersErrors.withSuchIdNotFound({ userId }));
     }
 
-    const { sort, page, where } = collectionOptions;
-    const pagination = calculatePagination(page.number, page.size, total);
-    const { skip, limit } = resolveSkipAndLimitFromPagination(pagination);
-
-    const userOrganizations = await usersRepository.getAllUserOrganizationsWithPagination(userId, { sort, skip, limit, where });
+    const userOrganizations = await usersRepository.getAllUserOrganizationsWithPagination(userId, collectionOptions);
 
     return {
       data: userOrganizations,
-      meta: pagination,
     };
   }
 

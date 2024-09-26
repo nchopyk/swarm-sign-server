@@ -1,6 +1,5 @@
 import usersResponseAttributes from './users.response.attributes';
 import organizationsResponseDtos from '../../../../organizations/transport/http/v1/organizations.response.dtos';
-import { paginationDTO } from '../../../../general/general.response.dto';
 import { CollectionResource, DTOResource } from '../../../../general/general.types';
 import {
   LoginFunctionReturn,
@@ -132,7 +131,6 @@ const userOrganizationsCollectionDTO = {
     resourceType: { type: 'string', default: 'collection' },
     dataType: { type: 'string', default: 'user.organization' },
     data: userOrganizationsList,
-    meta: paginationDTO,
   } satisfies DTOResource<CollectionResource<UserDTO>>,
 };
 

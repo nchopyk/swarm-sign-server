@@ -1,7 +1,7 @@
 import postgresClient from '../../../modules/postgres-db';
 import usersRepository from '../../users/service/users.repository';
 import { Knex } from 'knex';
-import { CollectionRepositoryOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
+import { CollectionOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
 import { convertModelSortRulesToTableSortRules } from '../../../modules/collection-query-processor/sort/sort.rules-converters';
 import { convertFiltersToQueryCondition } from '../../../modules/collection-query-processor/filter/filter.knex-condition-builder';
 import { OrganizationId } from '../../organizations/service/organizations.types';
@@ -63,16 +63,14 @@ export class OrganizationsMembersRepository {
     return memberRaw ? this.toMemberDTO(memberRaw) : null;
   }
 
-  async getAllMembersDTOs(organizationId: OrganizationId, collectionOptions: CollectionRepositoryOptions): Promise<Array<OrganizationMemberDTO>> {
+  async getAllMembersDTOs(organizationId: OrganizationId, collectionOptions: CollectionOptions): Promise<Array<OrganizationMemberDTO>> {
     const rows = await this.postgresClient
       .select(this.memberColumns)
       .from('users as user')
       .join('organizations_members', 'user.id', 'organizations_members.user_id')
       .where('organizations_members.organization_id', organizationId)
       .andWhere((builder) => convertFiltersToQueryCondition(builder, collectionOptions.where, this.memberColumns))
-      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, this.memberColumns))
-      .limit(collectionOptions.limit)
-      .offset(collectionOptions.skip);
+      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, this.memberColumns));
 
     return rows.map(this.toMemberDTO);
   }

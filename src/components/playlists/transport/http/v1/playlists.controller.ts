@@ -16,9 +16,9 @@ export class PlaylistsController {
 
   getAllForOrganization = async (req, res) => {
     const { organizationId } = req.params;
-    const { sort, page, where } = req.query;
+    const { sort, where } = req.query;
 
-    const collectionOptions: CollectionOptions = { sort, page, where };
+    const collectionOptions: CollectionOptions = { sort, where };
     const collection = await playlistService.getAllForOrganization(organizationId, collectionOptions);
 
     return res.status(200).send(collection);

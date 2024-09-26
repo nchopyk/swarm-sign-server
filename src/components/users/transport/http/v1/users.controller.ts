@@ -81,9 +81,9 @@ export class UsersController {
 
   getAllUserOrganizationsWithPagination = async (req, res) => {
     const { id } = req.user;
-    const { sort, page, where } = req.query;
+    const { sort, where } = req.query;
 
-    const collectionOptions: CollectionOptions = { sort, page, where };
+    const collectionOptions: CollectionOptions = { sort, where };
     const collection = await usersService.getAllUserOrganizationsWithPagination(id, collectionOptions);
 
     return res.code(200).send(collection);

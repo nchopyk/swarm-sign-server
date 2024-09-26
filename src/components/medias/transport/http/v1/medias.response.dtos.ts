@@ -1,7 +1,6 @@
 import mediasResponseAttributes from './medias.response.attributes';
 import organizationsResponseDtos from '../../../../organizations/transport/http/v1/organizations.response.dtos';
 import organizationsResponseAttributes from '../../../../organizations/transport/http/v1/organizations.response.attributes';
-import { paginationDTO } from '../../../../general/general.response.dto';
 import { CollectionResource, DTOResource } from '../../../../general/general.types';
 import { MediaDTO, MediaShortDTO } from '../../../service/medias.types';
 
@@ -57,7 +56,6 @@ const collectionDTO = {
     resourceType: { type: 'string', default: 'collection' },
     dataType: { type: 'string', default: detailedDTO.properties.resourceType.default },
     data: listDTO,
-    meta: paginationDTO,
   }  satisfies DTOResource<CollectionResource<MediaDTO>>,
 };
 

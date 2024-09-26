@@ -6,7 +6,7 @@ import { convertFiltersToQueryCondition } from '../../../modules/collection-quer
 import { convertModelSortRulesToTableSortRules } from '../../../modules/collection-query-processor/sort/sort.rules-converters';
 import { addTablePrefixToColumns, convertFieldsToColumns } from '../../general/utils/general.repository.utils';
 import { Knex } from 'knex';
-import { CollectionRepositoryOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
+import { CollectionOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 import {
   UserActivityLogCreationAttributes,
@@ -101,7 +101,7 @@ export class UsersRepository {
       .into('organizations_members');
   }
 
-  async getAllUserOrganizationsWithPagination(userId: UserId, collectionOptions: CollectionRepositoryOptions): Promise<Array<UserOrganization>> {
+  async getAllUserOrganizationsWithPagination(userId: UserId, collectionOptions: CollectionOptions): Promise<Array<UserOrganization>> {
     const columns = {
       ...this.usersOrganizationRelationModelToPrefixedColumnsMap,
       ...organizationsRepository.organizationsModelToPrefixedColumnsMapWithAliases,
@@ -113,9 +113,7 @@ export class UsersRepository {
       .join('organizations_members', 'organization.id', 'organizations_members.organization_id')
       .where('organizations_members.user_id', userId)
       .andWhere((builder) => convertFiltersToQueryCondition(builder, collectionOptions.where, columns))
-      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, columns))
-      .limit(collectionOptions.limit)
-      .offset(collectionOptions.skip);
+      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, columns));
 
     return this.toUserOrganizationDTO(rows);
   }

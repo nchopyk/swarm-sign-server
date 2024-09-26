@@ -27,10 +27,6 @@ const screensValidationSchemas = {
       organizationId: organizationAttributesConstraints.organization.id.required(),
     }),
     query: Joi.object().keys({
-      page: collectionQueryParamsProcessor.pagination.handleQueryParams({
-        defaultValue: { number: 1, size: 20 },
-      }),
-
       sort: collectionQueryParamsProcessor.sort.handleQueryParams({
         columns: Object.keys(screensRepository.screenDTOColumnMap),
         defaultValue: { createdAt: { order: 'desc' } },

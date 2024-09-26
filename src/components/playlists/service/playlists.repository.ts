@@ -3,7 +3,12 @@ import organizationsRepository from '../../organizations/service/organizations.r
 import mediasRepository from '../../medias/service/medias.repository';
 import crypto from 'node:crypto';
 import { Knex } from 'knex';
-import { CollectionRepositoryOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
+import { addTablePrefixToColumns, convertFieldsToColumns } from '../../general/utils/general.repository.utils';
+import { convertModelSortRulesToTableSortRules } from '../../../modules/collection-query-processor/sort/sort.rules-converters';
+import { convertFiltersToQueryCondition } from '../../../modules/collection-query-processor/filter/filter.knex-condition-builder';
+import { MediaModel } from '../../medias/service/medias.types';
+import { OrganizationId, OrganizationModel } from '../../organizations/service/organizations.types';
+import { CollectionOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
 import {
   PlaylistModel,
   PlaylistRepositoryCreationAttributes,
@@ -13,11 +18,6 @@ import {
   GetDTOByIdForOrganizationFuncParams,
   GetModelByIdForOrganizationFuncParams, PlaylistMediaModel, PlaylistMediaRepositoryCreationAttributes, PlaylistMediaDTO
 } from './playlists.types';
-import { addTablePrefixToColumns, convertFieldsToColumns } from '../../general/utils/general.repository.utils';
-import { OrganizationId, OrganizationModel } from '../../organizations/service/organizations.types';
-import { convertModelSortRulesToTableSortRules } from '../../../modules/collection-query-processor/sort/sort.rules-converters';
-import { convertFiltersToQueryCondition } from '../../../modules/collection-query-processor/filter/filter.knex-condition-builder';
-import { MediaModel } from '../../medias/service/medias.types';
 
 
 export class PlaylistsRepository {
@@ -111,16 +111,14 @@ export class PlaylistsRepository {
     return playlistRows ? this.toPlaylistDTO(playlistRows) : null;
   }
 
-  async getDTOsCollectionForOrganization(organizationId: OrganizationId, collectionOptions: CollectionRepositoryOptions): Promise<PlaylistDTO[]> {
+  async getDTOsCollectionForOrganization(organizationId: OrganizationId, collectionOptions: CollectionOptions): Promise<PlaylistDTO[]> {
     const playlistRows = await this.postgresClient
       .select(this.playlistDTOColumnMap)
       .from('playlists as playlist')
       .join('organizations as organization', 'playlist.organization_id', 'organization.id')
       .where('playlist.organization_id', organizationId)
       .andWhere((builder) => convertFiltersToQueryCondition(builder, collectionOptions.where, this.playlistDTOColumnMap))
-      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, this.playlistDTOColumnMap))
-      .limit(collectionOptions.limit)
-      .offset(collectionOptions.skip);
+      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, this.playlistDTOColumnMap));
 
     return playlistRows.map((playlistRow) => this.toPlaylistDTO(playlistRow));
   }

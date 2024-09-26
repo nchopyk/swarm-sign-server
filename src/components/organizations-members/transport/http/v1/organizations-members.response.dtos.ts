@@ -1,7 +1,6 @@
 import organizationsResponseAttributes from './organizations-members.response.attributes';
 import { CollectionResource, DTOResource } from '../../../../general/general.types';
 import { OrganizationMemberDTO } from '../../../service/organizations-members.types';
-import { paginationDTO } from '../../../../general/general.response.dto';
 import { UserModel } from '../../../../users/service/users.types';
 import userDTOs from '../../../../users/transport/http/v1/users.response.dtos';
 
@@ -29,7 +28,6 @@ const membersCollectionDTO = {
     resourceType: { type: 'string', default: 'collection' },
     dataType: { type: 'string', default: 'organization.member' },
     data: membersList,
-    meta: paginationDTO,
   } satisfies DTOResource<CollectionResource<UserModel>>,
 };
 /* ------------------------- Organization Members DTOs ------------------------- */

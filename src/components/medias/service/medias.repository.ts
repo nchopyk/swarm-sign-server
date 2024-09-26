@@ -6,7 +6,7 @@ import { convertModelSortRulesToTableSortRules } from '../../../modules/collecti
 import { convertFiltersToQueryCondition } from '../../../modules/collection-query-processor/filter/filter.knex-condition-builder';
 import { OrganizationId, OrganizationModel } from '../../organizations/service/organizations.types';
 import { Knex } from 'knex';
-import { CollectionRepositoryOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
+import { CollectionOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
 import {
   MediaServiceRepositoryAttributes,
   MediaRepositoryUpdatableAttributes,
@@ -86,16 +86,14 @@ export class MediasRepository {
     return mediaRows ? this.toMediaDTO(mediaRows) : null;
   }
 
-  async getDTOsCollectionForOrganization(organizationId: OrganizationId, collectionOptions: CollectionRepositoryOptions): Promise<MediaDTO[]> {
+  async getDTOsCollectionForOrganization(organizationId: OrganizationId, collectionOptions: CollectionOptions): Promise<MediaDTO[]> {
     const mediaRows = await this.postgresClient
       .select(this.mediaDTOColumnMap)
       .from('medias as media')
       .join('organizations as organization', 'media.organization_id', 'organization.id')
       .where('media.organization_id', organizationId)
       .andWhere((builder) => convertFiltersToQueryCondition(builder, collectionOptions.where, this.mediaDTOColumnMap))
-      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, this.mediaDTOColumnMap))
-      .limit(collectionOptions.limit)
-      .offset(collectionOptions.skip);
+      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, this.mediaDTOColumnMap));
 
     return mediaRows.map((mediaRow) => this.toMediaDTO(mediaRow));
   }

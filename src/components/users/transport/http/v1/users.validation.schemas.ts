@@ -105,10 +105,6 @@ const validationSchemas = {
 
   getAllUserOrganizationsWithPagination: {
     query: Joi.object().keys({
-      page: collectionQueryParamsProcessor.pagination.handleQueryParams({
-        defaultValue: { number: 1, size: 20 },
-      }),
-
       sort: collectionQueryParamsProcessor.sort.handleQueryParams({
         columns: [
           ...Object.keys(organizationsRepository.organizationsModelToPrefixedColumnsMapWithAliases),

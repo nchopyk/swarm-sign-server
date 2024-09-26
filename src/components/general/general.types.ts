@@ -35,7 +35,7 @@ export interface Pagination {
 
 export interface Collection<T> {
   data: T[];
-  meta: Pagination;
+  // meta: Pagination;
 }
 
 export interface CollectionResource<T> extends Resource, Collection<T> {
@@ -90,15 +90,15 @@ export type CollectionOptionSort = {
 };
 
 export interface CollectionOptions {
-  page: CollectionOptionPage;
+  // page: CollectionOptionPage;
   sort: CollectionOptionSort[];
   where: CollectionWhere;
 }
 
-export interface CollectionRepositoryOptions extends Omit<CollectionOptions, 'page'> {
-  skip: number;
-  limit: number;
-}
+// export interface CollectionRepositoryOptions extends Omit<CollectionOptions, 'page'> {
+//   skip: number;
+//   limit: number;
+// }
 
 /* ---------------------------- Coordinates Types ---------------------------- */
 export interface Coordinates {

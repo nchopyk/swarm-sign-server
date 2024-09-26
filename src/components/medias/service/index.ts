@@ -5,7 +5,6 @@ import mediasErrors from './medias.errors';
 import organizationsRepository from '../../organizations/service/organizations.repository';
 import organizationsErrors from '../../organizations/service/organizations.errors';
 import mediasRepository from './medias.repository';
-import { calculatePagination, resolveSkipAndLimitFromPagination } from '../../../modules/collection-query-processor/pagination/pagination.resolver';
 import { convertContentKeyToUrl, getImageProperties, getVideoProperties } from './medias.utils';
 import { MEDIA_TYPES } from './media.constants';
 import { STATIC_FOLDER_PATH } from '../../../config';
@@ -52,24 +51,17 @@ class MediasService {
   }
 
   public async getAllForOrganization(organizationId: OrganizationId, collectionOptions: CollectionOptions): Promise<Collection<MediaDTO>> {
-    const [organization, total] = await Promise.all([
-      organizationsRepository.getModelById(organizationId),
-      mediasRepository.getDTOsCollectionTotalCountForOrganization(organizationId, collectionOptions.where),
-    ]);
+    const organization = await organizationsRepository.getModelById(organizationId);
+
 
     if (!organization) {
       throw new Errors.NotFoundError(organizationsErrors.withSuchIdNotFound({ organizationId }));
     }
 
-    const { sort, page, where } = collectionOptions;
-    const pagination = calculatePagination(page.number, page.size, total);
-    const { skip, limit } = resolveSkipAndLimitFromPagination(pagination);
-
-    const medias = await mediasRepository.getDTOsCollectionForOrganization(organizationId, { sort, skip, limit, where });
+    const medias = await mediasRepository.getDTOsCollectionForOrganization(organizationId, collectionOptions);
 
     return {
       data: medias.map(convertContentKeyToUrl),
-      meta: pagination,
     };
   }
 

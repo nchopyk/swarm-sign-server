@@ -8,7 +8,6 @@ import organizationsErrors from '../../organizations/service/organizations.error
 import screensRepository from './screens.repository';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 import { Collection, CollectionOptions } from '../../general/general.types';
-import { calculatePagination, resolveSkipAndLimitFromPagination } from '../../../modules/collection-query-processor/pagination/pagination.resolver';
 
 
 class ScreensService {
@@ -31,24 +30,16 @@ class ScreensService {
   }
 
   public async getAllForOrganization(organizationId: OrganizationId, collectionOptions: CollectionOptions): Promise<Collection<ScreenDTO>> {
-    const [organization, total] = await Promise.all([
-      organizationsRepository.getModelById(organizationId),
-      screensRepository.getDTOsCollectionTotalCountForOrganization(organizationId, collectionOptions.where),
-    ]);
+    const organization = await organizationsRepository.getModelById(organizationId);
 
     if (!organization) {
       throw new Errors.NotFoundError(organizationsErrors.withSuchIdNotFound({ organizationId }));
     }
 
-    const { sort, page, where } = collectionOptions;
-    const pagination = calculatePagination(page.number, page.size, total);
-    const { skip, limit } = resolveSkipAndLimitFromPagination(pagination);
-
-    const screens = await screensRepository.getDTOsCollectionForOrganization(organizationId, { sort, skip, limit, where });
+    const screens = await screensRepository.getDTOsCollectionForOrganization(organizationId, collectionOptions);
 
     return {
       data: screens,
-      meta: pagination,
     };
   }
 

@@ -1,6 +1,6 @@
 import postgresClient from '../../../modules/postgres-db';
 import { Knex } from 'knex';
-import { CollectionRepositoryOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
+import { CollectionOptions, CollectionWhere, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
 import {
   ScreenModel,
   ScreenCreationAttributes,
@@ -82,16 +82,14 @@ export class ScreensRepository {
     return screenRows ? this.toScreenDTO(screenRows) : null;
   }
 
-  async getDTOsCollectionForOrganization(organizationId: OrganizationId, collectionOptions: CollectionRepositoryOptions): Promise<ScreenDTO[]> {
+  async getDTOsCollectionForOrganization(organizationId: OrganizationId, collectionOptions: CollectionOptions): Promise<ScreenDTO[]> {
     const screenRows = await this.postgresClient
       .select(this.screenDTOColumnMap)
       .from('screens as screen')
       .join('organizations as organization', 'screen.organization_id', 'organization.id')
       .where('screen.organization_id', organizationId)
       .andWhere((builder) => convertFiltersToQueryCondition(builder, collectionOptions.where, this.screenDTOColumnMap))
-      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, this.screenDTOColumnMap))
-      .limit(collectionOptions.limit)
-      .offset(collectionOptions.skip);
+      .orderBy(convertModelSortRulesToTableSortRules(collectionOptions.sort, this.screenDTOColumnMap));
 
     return screenRows.map((screenRow) => this.toScreenDTO(screenRow));
   }

@@ -5,7 +5,6 @@ import organizationsErrors from '../../organizations/service/organizations.error
 import playlistsRepository from './playlists.repository';
 import mediasRepository from '../../medias/service/medias.repository';
 import postgresDb from '../../../modules/postgres-db';
-import { calculatePagination, resolveSkipAndLimitFromPagination } from '../../../modules/collection-query-processor/pagination/pagination.resolver';
 import { DEFAULT_MEDIA_DURATION } from '../../medias/service/media.constants';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 import { Collection, CollectionOptions } from '../../general/general.types';
@@ -57,24 +56,17 @@ class PlaylistsService {
   }
 
   public async getAllForOrganization(organizationId: OrganizationId, collectionOptions: CollectionOptions): Promise<Collection<PlaylistDTO>> {
-    const [organization, total] = await Promise.all([
-      organizationsRepository.getModelById(organizationId),
-      playlistsRepository.getDTOsCollectionTotalCountForOrganization(organizationId, collectionOptions.where),
-    ]);
+    const organization = await organizationsRepository.getModelById(organizationId);
+
 
     if (!organization) {
       throw new Errors.NotFoundError(organizationsErrors.withSuchIdNotFound({ organizationId }));
     }
 
-    const { sort, page, where } = collectionOptions;
-    const pagination = calculatePagination(page.number, page.size, total);
-    const { skip, limit } = resolveSkipAndLimitFromPagination(pagination);
-
-    const playlists = await playlistsRepository.getDTOsCollectionForOrganization(organizationId, { sort, skip, limit, where });
+    const playlists = await playlistsRepository.getDTOsCollectionForOrganization(organizationId, collectionOptions);
 
     return {
       data: playlists,
-      meta: pagination,
     };
   }
 
@@ -99,7 +91,6 @@ class PlaylistsService {
 
     return {
       data: mediasDTOs,
-      meta: { currentPage: 1, lastPage: 1, pageSize: mediasDTOs.length, total: mediasDTOs.length, from: 1, to: mediasDTOs.length },
     };
   }
 

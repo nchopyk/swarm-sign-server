@@ -2,7 +2,6 @@ import { CollectionResource, DTOResource } from '../../../../general/general.typ
 import { PlaylistDTO, PlaylistMediaDTO } from '../../../service/playlists.types';
 import playlistsResponseAttributes from './playlists.response.attributes';
 import organizationsResponseDtos from '../../../../organizations/transport/http/v1/organizations.response.dtos';
-import { paginationDTO } from '../../../../general/general.response.dto';
 import mediasResponseDtos from '../../../../medias/transport/http/v1/medias.response.dtos';
 
 const detailedDTO = {
@@ -29,7 +28,6 @@ const collectionDTO = {
     resourceType: { type: 'string', default: 'collection' },
     dataType: { type: 'string', default: detailedDTO.properties.resourceType.default },
     data: listDTO,
-    meta: paginationDTO,
   }  satisfies DTOResource<CollectionResource<PlaylistDTO>>,
 };
 
@@ -64,7 +62,6 @@ const playlistMediasCollectionDTO = {
     resourceType: { type: 'string', default: 'collection' },
     dataType: { type: 'string', default: playlistMediaDetailedDTO.properties.resourceType.default },
     data: playlistMediaListDTO,
-    meta: paginationDTO,
   }  satisfies DTOResource<CollectionResource<PlaylistMediaDTO>>,
 };
 
