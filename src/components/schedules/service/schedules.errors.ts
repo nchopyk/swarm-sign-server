@@ -7,6 +7,12 @@ const schedulesErrors = {
     message: 'Schedule with such id not found',
     context
   }),
+
+  screenAlreadyHasSchedule: (context: { screenId: string }): ApiError => ({
+    errorType: 'schedules.screenAlreadyHasSchedule',
+    message: 'Screen already has schedule',
+    context
+  }),
 };
 
 export default schedulesErrors;

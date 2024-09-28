@@ -65,6 +65,14 @@ export class SchedulesRepository {
       .first();
   }
 
+  async getModelByScreenId(screenId: ScreenId, trx?: Knex.Transaction): Promise<ScheduleModel | null> {
+    return (trx || this.postgresClient)
+      .select(this.scheduleModelToTableColumnMap)
+      .from('schedules')
+      .where('screen_id', screenId)
+      .first();
+  }
+
   async getModelByIdForOrganization({ scheduleId, organizationId }: GetModelByIdForOrganizationFuncParams, trx?: Knex.Transaction): Promise<ScheduleModel | null> {
     return (trx || this.postgresClient)
       .select(this.scheduleModelToTableColumnMap)

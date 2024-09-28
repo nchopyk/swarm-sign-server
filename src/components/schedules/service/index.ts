@@ -12,9 +12,10 @@ import { GetScheduleByIdFuncParams, ScheduleCreationAttributes, ScheduleDTO, Sch
 
 class SchedulesService {
   public async create(newScheduleData: ScheduleCreationAttributes) {
-    const [screen, playlist] = await Promise.all([
+    const [screen, playlist, screenSchedule] = await Promise.all([
       screensRepository.getModelById(newScheduleData.screenId),
-      playlistsRepository.getModelById(newScheduleData.playlistId)
+      playlistsRepository.getModelById(newScheduleData.playlistId),
+      schedulesRepository.getModelByScreenId(newScheduleData.screenId)
     ]);
 
     if (!screen) {
@@ -23,6 +24,10 @@ class SchedulesService {
 
     if (!playlist) {
       throw new Errors.BadRequest(playlistsErrors.withSuchIdNotFound({ playlistId: newScheduleData.playlistId }));
+    }
+
+    if (screenSchedule) {
+      throw new Errors.BadRequest(schedulesErrors.screenAlreadyHasSchedule({ screenId: newScheduleData.screenId }));
     }
 
     const newScheduleId = await schedulesRepository.create(newScheduleData);
@@ -49,10 +54,11 @@ class SchedulesService {
   }
 
   public async updateByIdForOrganization({ organizationId, scheduleId, fieldsToUpdate }: UpdateByIdForOrganizationFuncParams) {
-    const [schedule, screen, playlists] = await Promise.all([
+    const [schedule, screen, playlists, screenSchedule] = await Promise.all([
       schedulesRepository.getModelByIdForOrganization({ scheduleId, organizationId }),
       fieldsToUpdate.screenId && screensRepository.getModelById(fieldsToUpdate.screenId),
-      fieldsToUpdate.playlistId && playlistsRepository.getModelById(fieldsToUpdate.playlistId)
+      fieldsToUpdate.playlistId && playlistsRepository.getModelById(fieldsToUpdate.playlistId),
+      fieldsToUpdate.screenId && schedulesRepository.getModelByScreenId(fieldsToUpdate.screenId)
     ]);
 
     if (!schedule) {
@@ -65,6 +71,10 @@ class SchedulesService {
 
     if (fieldsToUpdate.playlistId && !playlists) {
       throw new Errors.BadRequest(playlistsErrors.withSuchIdNotFound({ playlistId: fieldsToUpdate.playlistId }));
+    }
+
+    if (fieldsToUpdate.screenId && screenSchedule) {
+      throw new Errors.BadRequest(schedulesErrors.screenAlreadyHasSchedule({ screenId: fieldsToUpdate.screenId }));
     }
 
     await schedulesRepository.update(scheduleId, fieldsToUpdate);
