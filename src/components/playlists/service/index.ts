@@ -6,6 +6,7 @@ import playlistsRepository from './playlists.repository';
 import mediasRepository from '../../medias/service/medias.repository';
 import postgresDb from '../../../modules/postgres-db';
 import { DEFAULT_MEDIA_DURATION } from '../../medias/service/media.constants';
+import { convertContentKeyToUrl } from '../../medias/service/medias.utils';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 import { Collection, CollectionOptions } from '../../general/general.types';
 import {
@@ -109,17 +110,23 @@ class PlaylistsService {
     await playlistsRepository.delete(playlistId);
   }
 
-  public async getPlaylistMedias({ organizationId, playlistId }: GetPlaylistByIdFuncParams): Promise<Collection<PlaylistMediaDTO>> {
-    const playlist = await playlistsRepository.getModelByIdForOrganization({ organizationId, playlistId });
+  public async getPlaylistMedias(playlistId: PlaylistId): Promise<Collection<PlaylistMediaDTO>> {
+    const playlist = await playlistsRepository.getModelById(playlistId);
 
     if (!playlist) {
       throw new Errors.NotFoundError(playlistsErrors.withSuchIdNotFound({ playlistId }));
     }
 
-    const mediasDTOs = await playlistsRepository.getAllPlaylistMediasDTOs(playlistId);
+    const playlistMediasDTOs = await playlistsRepository.getAllPlaylistMediasDTOs(playlistId);
 
     return {
-      data: mediasDTOs,
+      data: playlistMediasDTOs.map((playlistMedia) => ({
+        ...playlistMedia,
+        media: {
+          ...playlistMedia.media,
+          content: convertContentKeyToUrl(playlistMedia.media.content),
+        },
+      })),
     };
   }
 
@@ -149,7 +156,7 @@ class PlaylistsService {
       }
     });
 
-    return this.getPlaylistMedias({ organizationId, playlistId });
+    return this.getPlaylistMedias(playlistId);
   }
 
   public async removePlaylistMedias({ organizationId, playlistId, playlistMedias }: {
@@ -178,7 +185,7 @@ class PlaylistsService {
       }
     });
 
-    return this.getPlaylistMedias({ organizationId, playlistId });
+    return this.getPlaylistMedias(playlistId);
   }
 }
 
