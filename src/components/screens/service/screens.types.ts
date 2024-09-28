@@ -33,6 +33,11 @@ export interface ScreenDTO extends Omit<ScreenModel, 'organizationId'> {
   organization: OrganizationShortDTO;
 }
 
+export type ScreenShortDTO = Omit<ScreenModel, 'organizationId'>;
+
+export type PrefixedShortScreenDTO = {
+  [K in keyof ScreenShortDTO as `screen.${K}`]: ScreenShortDTO[K]
+}
 /* --------------------------------- Screen DTOs --------------------------------- */
 
 

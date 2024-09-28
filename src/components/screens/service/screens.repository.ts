@@ -31,6 +31,9 @@ export class ScreensRepository {
   };
 
   public readonly screenModelToPrefixedColumnsColumnMap = addTablePrefixToColumns(this.screenModelToTableColumnMap, 'screen');
+  public readonly screenModelToPrefixedColumnsColumnMapWithAliases = addTablePrefixToColumns(this.screenModelToTableColumnMap, 'screen', {
+    includePrefixInAliases: true,
+  });
 
   public readonly screenDTOColumnMap: ModelToPrefixedColumnsMapping = {
     ...this.screenModelToPrefixedColumnsColumnMap,

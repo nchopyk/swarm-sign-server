@@ -38,6 +38,12 @@ export interface PlaylistDTO extends Omit<PlaylistModel, 'organizationId'> {
   organization: OrganizationShortDTO;
 }
 
+export type PlaylistShortDTO = Omit<PlaylistModel, 'organizationId'>;
+
+export type PrefixedShortPlaylistDTO = {
+  [K in keyof PlaylistShortDTO as `playlist.${K}`]: PlaylistShortDTO[K]
+};
+
 /* --------------------------------- Playlist DTOs --------------------------------- */
 
 
@@ -59,6 +65,8 @@ export type PlaylistMediaRepositoryCreationAttributes = Omit<PlaylistMediaModel,
 export interface PlaylistMediaDTO extends Omit<PlaylistMediaModel, 'mediaId' | 'playlistId'> {
   media: MediaModel;
 }
+
+export type PlaylistMediaShortDTO = PlaylistMediaModel;
 
 /* --------------------------------- Playlist Media DTO --------------------------------- */
 

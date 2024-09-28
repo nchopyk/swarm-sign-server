@@ -40,6 +40,10 @@ export class PlaylistsRepository {
   };
 
   public readonly playlistModelToPrefixedColumnsColumnMap = addTablePrefixToColumns(this.playlistModelToTableColumnMap, 'playlist');
+  public readonly playlistModelToPrefixedColumnsColumnMapWithAliases = addTablePrefixToColumns(this.playlistModelToTableColumnMap, 'playlist', {
+    includePrefixInAliases: true,
+  });
+
   public readonly playlistMediaModelToPrefixedColumnsColumnMap = addTablePrefixToColumns(this.playlistMediaModelToTableColumnMap, 'playlistMedia');
 
   public readonly playlistDTOColumnMap: ModelToPrefixedColumnsMapping = {
