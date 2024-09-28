@@ -53,6 +53,14 @@ const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPl
     },
   }, controller.deleteByIdForOrganization);
 
+  fastify.get('organizations/:organizationId/screens/:screenId/schedule', {
+    preHandler: organizationsRoleAccessControlHook(Object.values(ORGANIZATION_ROLES)),
+    schema: {
+      params: schedulesValidationSchemas.getScreenSchedule.params,
+      response: transmittersTransmittersValidationSchemas.getScreenSchedule,
+    }
+  }, controller.getScreenSchedule);
+
   done();
 };
 

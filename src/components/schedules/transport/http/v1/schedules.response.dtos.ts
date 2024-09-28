@@ -1,7 +1,8 @@
 import schedulesResponseAttributes from './schedules.response.attributes';
 import organizationsResponseDtos from '../../../../organizations/transport/http/v1/organizations.response.dtos';
 import { CollectionResource, DTOResource } from '../../../../general/general.types';
-import { ScheduleDTO } from '../../../service/schedules.types';
+import { ScheduleDTO, ScreenScheduleDTO } from '../../../service/schedules.types';
+import playlistsResponseDtos from '../../../../playlists/transport/http/v1/playlists.response.dtos';
 
 const detailedDTO = {
   type: 'object',
@@ -17,6 +18,17 @@ const detailedDTO = {
     playlist: organizationsResponseDtos.shortDTO,
   } satisfies DTOResource<ScheduleDTO>,
 };
+
+const screenScheduleDTO = {
+  type: 'object',
+  properties: {
+    resourceType: { type: 'string', default: 'screen.schedule.detail' },
+    schedule: detailedDTO,
+    playlist: playlistsResponseDtos.shortDTO,
+    medias: playlistsResponseDtos.playlistMediasCollectionDTO,
+  } satisfies DTOResource<ScreenScheduleDTO>,
+};
+
 
 const listDTO = {
   type: 'array',
@@ -52,6 +64,7 @@ const deletedSuccessfullyResponseDTO = {
 export default {
   detailedDTO,
   collectionDTO,
+  screenScheduleDTO,
   activatedSuccessfullyResponseDTO,
   deletedSuccessfullyResponseDTO,
 };

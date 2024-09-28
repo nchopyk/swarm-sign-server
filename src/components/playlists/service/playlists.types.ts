@@ -66,8 +66,6 @@ export interface PlaylistMediaDTO extends Omit<PlaylistMediaModel, 'mediaId' | '
   media: MediaModel;
 }
 
-export type PlaylistMediaShortDTO = PlaylistMediaModel;
-
 /* --------------------------------- Playlist Media DTO --------------------------------- */
 
 

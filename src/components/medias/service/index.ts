@@ -61,7 +61,7 @@ class MediasService {
     const medias = await mediasRepository.getDTOsCollectionForOrganization(organizationId, collectionOptions);
 
     return {
-      data: medias.map(convertContentKeyToUrl),
+      data: medias.map((media) => ({ ...media, content: convertContentKeyToUrl(media.content) })),
     };
   }
 
@@ -72,7 +72,10 @@ class MediasService {
       throw new Errors.NotFoundError(mediasErrors.withSuchIdNotFound({ mediaId }));
     }
 
-    return convertContentKeyToUrl(media);
+    return {
+      ...media,
+      content: convertContentKeyToUrl(media.content),
+    };
   }
 
   public async updateByIdForOrganization({ organizationId, mediaId, fieldsToUpdate, buffer }: UpdateByIdForOrganizationFuncParams) {

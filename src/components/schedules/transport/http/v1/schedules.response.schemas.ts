@@ -22,9 +22,9 @@ const screensValidationSchemas = {
     200: screensDTOs.deletedSuccessfullyResponseDTO,
   },
 
-  activate: {
-    200: screensDTOs.activatedSuccessfullyResponseDTO,
-  },
+  getScreenSchedule: {
+    200: screensDTOs.screenScheduleDTO,
+  }
 };
 
 

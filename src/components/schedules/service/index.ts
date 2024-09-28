@@ -7,7 +7,14 @@ import screensErrors from '../../screens/service/screens.errors';
 import playlistsErrors from '../../playlists/service/playlists.errors';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 import { Collection, CollectionOptions } from '../../general/general.types';
-import { GetScheduleByIdFuncParams, ScheduleCreationAttributes, ScheduleDTO, ScheduleId, UpdateByIdForOrganizationFuncParams } from './schedules.types';
+import {
+  GetScheduleByIdFuncParams,
+  ScheduleCreationAttributes,
+  ScheduleDTO,
+  ScheduleId,
+  ScreenScheduleDTO,
+  UpdateByIdForOrganizationFuncParams
+} from './schedules.types';
 
 
 class SchedulesService {
@@ -90,6 +97,29 @@ class SchedulesService {
     }
 
     await schedulesRepository.delete(scheduleId);
+  }
+
+  public async getScreenSchedule(screenId: string): Promise<ScreenScheduleDTO> {
+    const schedule = await schedulesRepository.getModelByScreenId(screenId);
+
+    if (!schedule) {
+      throw new Errors.NotFoundError(schedulesErrors.noScheduleForScreen({ screenId }));
+    }
+
+    const playlist = await playlistsRepository.getModelById(schedule.playlistId);
+    const medias = await playlistsRepository.getAllPlaylistMediasDTOs(schedule.playlistId);
+
+    if (!playlist) {
+      throw new Errors.InternalError(playlistsErrors.withSuchIdNotFound({ playlistId: schedule.playlistId }));
+    }
+
+    return {
+      schedule,
+      playlist,
+      medias: {
+        data: medias,
+      },
+    };
   }
 }
 

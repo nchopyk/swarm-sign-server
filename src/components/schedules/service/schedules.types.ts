@@ -1,6 +1,7 @@
 import { OrganizationId, OrganizationShortDTO } from '../../organizations/service/organizations.types';
-import { PlaylistShortDTO } from '../../playlists/service/playlists.types';
+import { PlaylistMediaDTO, PlaylistShortDTO } from '../../playlists/service/playlists.types';
 import { ScreenShortDTO } from '../../screens/service/screens.types';
+import { Collection } from '../../general/general.types';
 
 export type ScheduleId = string;
 export type ScheduleName = string;
@@ -35,6 +36,13 @@ export interface ScheduleDTO extends Omit<ScheduleModel, 'organizationId' | 'scr
   playlist: PlaylistShortDTO;
 }
 
+export type ScheduleShortDTO = Omit<ScheduleModel, 'organization'>;
+
+export interface ScreenScheduleDTO {
+  schedule: ScheduleShortDTO;
+  playlist: PlaylistShortDTO;
+  medias: Collection<PlaylistMediaDTO>;
+}
 /* --------------------------------- Schedule DTOs --------------------------------- */
 
 

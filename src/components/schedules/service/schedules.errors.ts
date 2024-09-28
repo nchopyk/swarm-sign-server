@@ -13,6 +13,12 @@ const schedulesErrors = {
     message: 'Screen already has schedule',
     context
   }),
+
+  noScheduleForScreen: (context: { screenId: string }): ApiError => ({
+    errorType: 'schedules.noScheduleForScreen',
+    message: 'No schedule for screen',
+    context
+  }),
 };
 
 export default schedulesErrors;

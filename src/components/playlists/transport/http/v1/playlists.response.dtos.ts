@@ -1,5 +1,5 @@
 import { CollectionResource, DTOResource } from '../../../../general/general.types';
-import { PlaylistDTO, PlaylistMediaDTO } from '../../../service/playlists.types';
+import { PlaylistDTO, PlaylistMediaDTO, PlaylistShortDTO } from '../../../service/playlists.types';
 import playlistsResponseAttributes from './playlists.response.attributes';
 import organizationsResponseDtos from '../../../../organizations/transport/http/v1/organizations.response.dtos';
 import mediasResponseDtos from '../../../../medias/transport/http/v1/medias.response.dtos';
@@ -15,6 +15,19 @@ const detailedDTO = {
     updatedAt: playlistsResponseAttributes.playlist.updatedAt,
     organization: organizationsResponseDtos.shortDTO,
   } satisfies DTOResource<PlaylistDTO>,
+};
+
+const shortDTO = {
+  type: 'object',
+  properties: {
+    resourceType: { type: 'string', default: 'playlist.short' },
+    id: playlistsResponseAttributes.playlist.id,
+    name: playlistsResponseAttributes.playlist.name,
+    notes: playlistsResponseAttributes.playlist.notes,
+    createdAt: playlistsResponseAttributes.playlist.createdAt,
+    updatedAt: playlistsResponseAttributes.playlist.updatedAt,
+  } satisfies DTOResource<PlaylistShortDTO>,
+
 };
 
 const listDTO = {
@@ -51,6 +64,7 @@ const playlistMediaDetailedDTO = {
   } satisfies DTOResource<PlaylistMediaDTO>,
 };
 
+
 const playlistMediaListDTO = {
   type: 'array',
   items: playlistMediaDetailedDTO,
@@ -67,6 +81,7 @@ const playlistMediasCollectionDTO = {
 
 export default {
   detailedDTO,
+  shortDTO,
   collectionDTO,
   deletedSuccessfullyResponseDTO,
   playlistMediaDetailedDTO,

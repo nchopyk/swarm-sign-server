@@ -1,15 +1,12 @@
 import { PUBLIC_SERVER_URL } from '../../../config';
-import { MediaDTO, MediaProperties } from './medias.types';
+import { MediaContent, MediaProperties } from './medias.types';
 import ffmpeg from 'fluent-ffmpeg';
 import ffprobe from '@ffprobe-installer/ffprobe';
 import sharp from 'sharp';
 
 ffmpeg.setFfprobePath(ffprobe.path);
 
-export const convertContentKeyToUrl = (media: MediaDTO): MediaDTO => ({
-  ...media,
-  content: `${PUBLIC_SERVER_URL}/v1/static/${media.content}`,
-});
+export const convertContentKeyToUrl = (content: MediaContent): string => `${PUBLIC_SERVER_URL}/v1/static/${content}`;
 
 export const getVideoProperties = (filePath: string): Promise<MediaProperties> => new Promise((resolve, reject) => {
   ffmpeg(filePath).ffprobe((err, metadata) => {

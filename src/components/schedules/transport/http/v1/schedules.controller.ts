@@ -56,6 +56,14 @@ export class SchedulesController {
 
     return res.status(200).send({ message: 'Schedule deleted successfully.' });
   };
+
+  getScreenSchedule = async (req, res) => {
+    const { screenId } = req.params;
+
+    const collection = await scheduleService.getScreenSchedule(screenId);
+
+    return res.status(200).send(collection);
+  };
 }
 
 export default new SchedulesController();
