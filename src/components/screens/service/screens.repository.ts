@@ -8,7 +8,8 @@ import {
   ScreenDTO,
   ScreenRepositoryUpdatableAttributes,
   GetDTOByIdForOrganizationFuncParams,
-  GetModelByIdForOrganizationFuncParams
+  GetModelByIdForOrganizationFuncParams,
+  ScreenDeviceId
 } from './screens.types';
 import crypto from 'node:crypto';
 import { addTablePrefixToColumns, convertFieldsToColumns } from '../../general/utils/general.repository.utils';
@@ -72,7 +73,7 @@ export class ScreensRepository {
       .first();
   }
 
-  async getModelByDeviceId(deviceId: string, trx?: Knex.Transaction): Promise<ScreenModel | null> {
+  async getModelByDeviceId(deviceId: ScreenDeviceId, trx?: Knex.Transaction): Promise<ScreenModel | null> {
     return (trx || this.postgresClient)
       .select(this.screenModelToTableColumnMap)
       .from('screens')
@@ -120,7 +121,7 @@ export class ScreensRepository {
   async update(screenId: ScreenId, fieldsToUpdate: ScreenRepositoryUpdatableAttributes, trx?: Knex.Transaction): Promise<void> {
     const columns = convertFieldsToColumns(fieldsToUpdate, this.screenModelToTableColumnMap);
 
-    if (Object.keys(columns).length === 0) {
+    if (!Object.keys(columns)) {
       return;
     }
 

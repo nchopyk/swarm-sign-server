@@ -57,7 +57,8 @@ export class ScreensController {
   };
 
   activate = async (req, res) => {
-    const { code, screenId } = req.body;
+    const { screenId } = req.params;
+    const { code } = req.body;
 
     await screenService.activate(screenId, code);
 

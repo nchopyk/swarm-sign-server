@@ -82,6 +82,12 @@ class ScreensService {
   }
 
   async activate(screenId: ScreenId, code: string) {
+    const screen = await screensRepository.getModelById(screenId);
+
+    if (!screen) {
+      throw new Errors.NotFoundError(screensErrors.withSuchIdNotFound({ screenId }));
+    }
+
     const connection = connectionsManager.unauthorizedConnections.get(code);
 
     if (!connection) {
@@ -92,7 +98,7 @@ class ScreensService {
       throw new Errors.InternalError(screensErrors.clientIdMissing({ code }));
     }
 
-    await screensRepository.update(screenId, { deviceId: screenId });
+    await screensRepository.update(screenId, { deviceId: connection.clientId });
 
     await sendAuthSuccess(connection, connection.clientId, { screenId });
   }
