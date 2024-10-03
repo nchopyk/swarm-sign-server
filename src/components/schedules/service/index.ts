@@ -3,7 +3,6 @@ import schedulesErrors from './schedules.errors';
 import schedulesRepository from './schedules.repository';
 import playlistsRepository from '../../playlists/service/playlists.repository';
 import screensRepository from '../../screens/service/screens.repository';
-import playlistsService from '../../playlists/service';
 import screensErrors from '../../screens/service/screens.errors';
 import playlistsErrors from '../../playlists/service/playlists.errors';
 import { OrganizationId } from '../../organizations/service/organizations.types';
@@ -16,6 +15,8 @@ import {
   ScreenScheduleDTO,
   UpdateByIdForOrganizationFuncParams
 } from './schedules.types';
+import { sendNewScheduleToScreen } from '../transport/ws/schedules.ws.senders';
+import schedulesBuilder from './schedules.builder';
 
 
 class SchedulesService {
@@ -39,6 +40,8 @@ class SchedulesService {
     }
 
     const newScheduleId = await schedulesRepository.create(newScheduleData);
+
+    await sendNewScheduleToScreen(newScheduleData.screenId);
 
     return await this.getByIdForOrganization({ organizationId: newScheduleData.organizationId, scheduleId: newScheduleId });
   }
@@ -86,6 +89,7 @@ class SchedulesService {
     }
 
     await schedulesRepository.update(scheduleId, fieldsToUpdate);
+    await sendNewScheduleToScreen(fieldsToUpdate.screenId || schedule.screenId);
 
     return await this.getByIdForOrganization({ organizationId, scheduleId });
   }
@@ -98,27 +102,17 @@ class SchedulesService {
     }
 
     await schedulesRepository.delete(scheduleId);
+    await sendNewScheduleToScreen(schedule.screenId);
   }
 
-  public async getScreenSchedule(screenId: string): Promise<ScreenScheduleDTO> {
-    const schedule = await schedulesRepository.getModelByScreenId(screenId);
+  public async getScreenSchedule(screenId: string): Promise<ScreenScheduleDTO | null> {
+    const screen = await screensRepository.getModelById(screenId);
 
-    if (!schedule) {
-      throw new Errors.NotFoundError(schedulesErrors.noScheduleForScreen({ screenId }));
+    if (!screen) {
+      throw new Errors.NotFoundError(screensErrors.withSuchIdNotFound({ screenId }));
     }
 
-    const playlist = await playlistsRepository.getModelById(schedule.playlistId);
-    const medias = await playlistsService.getPlaylistMedias(schedule.playlistId);
-
-    if (!playlist) {
-      throw new Errors.InternalError(playlistsErrors.withSuchIdNotFound({ playlistId: schedule.playlistId }));
-    }
-
-    return {
-      schedule,
-      playlist,
-      medias,
-    };
+    return schedulesBuilder.buildNew(screenId);
   }
 }
 

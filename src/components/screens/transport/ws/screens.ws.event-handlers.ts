@@ -3,7 +3,7 @@ import logger from '../../../../modules/logger';
 import connectionsManager from './connections-manager/index';
 import screensRepository from '../../service/screens.repository';
 import { sendAuthCode, sendLoginFailed, sendLoginSuccess, sendSchedule } from './screens.ws.event-senders';
-import schedulesService from '../../../schedules/service/index';
+import schedulesBuilder from '../../../schedules/service/schedules.builder';
 
 
 const screenEventsHandlers: Record<string, EventHandler> = {
@@ -27,8 +27,6 @@ const screenEventsHandlers: Record<string, EventHandler> = {
       connectionsManager.unauthorizedConnections.delete(connection.authCode, connection);
     }
 
-    console.log({ clientId });
-
     const screen = await screensRepository.getModelByDeviceId(clientId);
 
     if (!screen) {
@@ -40,7 +38,7 @@ const screenEventsHandlers: Record<string, EventHandler> = {
     connectionsManager.authorizedConnections.save(clientId, connection);
     await sendLoginSuccess(connection, clientId);
 
-    const schedule = await schedulesService.getScreenSchedule(screen.id);
+    const schedule = await schedulesBuilder.buildNew(screen.id);
     await sendSchedule(connection, clientId, { schedule });
 
     logger.info(`client ${clientId} logged in`, { tag: `WS_TRANSPORT | SCREENS | CLIENT:${clientId}` });

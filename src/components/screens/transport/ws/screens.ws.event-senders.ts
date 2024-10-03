@@ -10,7 +10,6 @@ export const sendAuthCode = async (connection: ExtendedWebSocket, clientId: stri
   return sendEvent({ connection, clientId, event: SERVER_EVENTS.AUTH_CODE, data });
 };
 
-
 export const sendAuthSuccess = async (connection: ExtendedWebSocket, clientId: string, data: { screenId: string }) => {
   logger.info(`sending ${SERVER_EVENTS.AUTH_SUCCESS} event`, { tag: `WS GATEWAY | SCREENS | CLIENT:${clientId}` });
   return sendEvent({ connection, clientId, event: SERVER_EVENTS.AUTH_SUCCESS, data });
@@ -26,7 +25,7 @@ export const sendLoginFailed = async (connection: ExtendedWebSocket, clientId: s
   return sendEvent({ connection, clientId, event: SERVER_EVENTS.LOGIN_FAILED, data: null });
 };
 
-export const sendSchedule = async (connection: ExtendedWebSocket, clientId: string, data: { schedule: ScreenScheduleDTO }) => {
+export const sendSchedule = async (connection: ExtendedWebSocket, clientId: string, data: { schedule: ScreenScheduleDTO | null }) => {
   logger.info(`sending ${SERVER_EVENTS.SCHEDULE} event`, { tag: `WS GATEWAY | SCREENS | CLIENT:${clientId}` });
   return sendEvent({ connection, clientId, event: SERVER_EVENTS.SCHEDULE, data });
 };
