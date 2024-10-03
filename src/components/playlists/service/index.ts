@@ -4,9 +4,11 @@ import organizationsRepository from '../../organizations/service/organizations.r
 import organizationsErrors from '../../organizations/service/organizations.errors';
 import playlistsRepository from './playlists.repository';
 import mediasRepository from '../../medias/service/medias.repository';
+import schedulesRepository from '../../schedules/service/schedules.repository';
 import postgresDb from '../../../modules/postgres-db';
 import { DEFAULT_MEDIA_DURATION } from '../../medias/service/media.constants';
 import { convertContentKeyToUrl } from '../../medias/service/medias.utils';
+import { sendNewScheduleToScreensWithPlaylist } from '../../schedules/transport/ws/schedules.ws.senders';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 import { Collection, CollectionOptions } from '../../general/general.types';
 import {
@@ -97,14 +99,21 @@ class PlaylistsService {
       throw new Errors.InternalError(playlistsErrors.withSuchIdNotFound({ playlistId }));
     }
 
+    await sendNewScheduleToScreensWithPlaylist(playlistId);
+
     return updatedPlaylist;
   }
 
   public async deleteByIdForOrganization({ organizationId, playlistId }: { organizationId: OrganizationId, playlistId: PlaylistId }) {
     const playlist = await playlistsRepository.getModelByIdForOrganization({ playlistId, organizationId });
+    const schedule = await schedulesRepository.getModelByPlaylistId(playlistId);
 
     if (!playlist) {
       throw new Errors.NotFoundError(playlistsErrors.withSuchIdNotFound({ playlistId }));
+    }
+
+    if (schedule) {
+      throw new Errors.BadRequest(playlistsErrors.playlistIsUsedInSchedule({ playlistId }));
     }
 
     await playlistsRepository.delete(playlistId);
@@ -156,6 +165,8 @@ class PlaylistsService {
       }
     });
 
+    await sendNewScheduleToScreensWithPlaylist(playlistId);
+
     return this.getPlaylistMedias(playlistId);
   }
 
@@ -184,6 +195,8 @@ class PlaylistsService {
         await playlistsRepository.deletePlaylistMedia(playlistMediaModel.id, trx);
       }
     });
+
+    await sendNewScheduleToScreensWithPlaylist(playlistId);
 
     return this.getPlaylistMedias(playlistId);
   }

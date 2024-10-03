@@ -19,6 +19,12 @@ const playlistsErrors = {
     message: `Playlist medias with ids=${context.playlistMediaIds.join(', ')} not found`,
     context
   }),
+
+  playlistIsUsedInSchedule: (context: { playlistId: PlaylistId }): ApiError => ({
+    errorType: 'playlists.playlistIsUsedInSchedule',
+    message: `Playlist with id=${context.playlistId} is used in schedule`,
+    context
+  }),
 };
 
 export default playlistsErrors;

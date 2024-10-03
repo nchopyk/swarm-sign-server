@@ -9,7 +9,7 @@ import screensRepository from '../../screens/service/screens.repository';
 import playlistsRepository from '../../playlists/service/playlists.repository';
 import { OrganizationId, OrganizationModel } from '../../organizations/service/organizations.types';
 import { ScreenId, ScreenModel, ScreenRepositoryUpdatableAttributes } from '../../screens/service/screens.types';
-import { PlaylistModel } from '../../playlists/service/playlists.types';
+import { PlaylistId, PlaylistModel } from '../../playlists/service/playlists.types';
 import { CollectionOptions, ModelToColumnsMapping, ModelToPrefixedColumnsMapping } from '../../general/general.types';
 import {
   ScheduleModel,
@@ -71,6 +71,21 @@ export class SchedulesRepository {
       .from('schedules')
       .where('screen_id', screenId)
       .first();
+  }
+
+  async getModelByPlaylistId(playlistId: PlaylistId, trx?: Knex.Transaction): Promise<ScheduleModel | null> {
+    return (trx || this.postgresClient)
+      .select(this.scheduleModelToTableColumnMap)
+      .from('schedules')
+      .where('playlist_id', playlistId)
+      .first();
+  }
+
+  async getAllModelsWithPlaylistId(playlistId: PlaylistId, trx?: Knex.Transaction): Promise<ScheduleModel[]> {
+    return (trx || this.postgresClient)
+      .select(this.scheduleModelToTableColumnMap)
+      .from('schedules')
+      .where('playlist_id', playlistId);
   }
 
   async getModelByIdForOrganization({ scheduleId, organizationId }: GetModelByIdForOrganizationFuncParams, trx?: Knex.Transaction): Promise<ScheduleModel | null> {

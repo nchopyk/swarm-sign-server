@@ -4,6 +4,7 @@ import screensRepository from '../../../screens/service/screens.repository';
 import logger from '../../../../modules/logger';
 import { sendSchedule } from '../../../screens/transport/ws/screens.ws.event-senders';
 import schedulesBuilder from '../../service/schedules.builder';
+import schedulesRepository from '../../service/schedules.repository';
 
 export const sendNewScheduleToScreen = async (screenId: ScreenId) => {
   const screen = await screensRepository.getModelByDeviceId(screenId);
@@ -28,4 +29,12 @@ export const sendNewScheduleToScreen = async (screenId: ScreenId) => {
   const schedule = await schedulesBuilder.buildNew(screen.id);
 
   await sendSchedule(connection, screen.deviceId, { schedule });
+};
+
+export const sendNewScheduleToScreensWithPlaylist = async (playlistId: string) => {
+  const schedules = await schedulesRepository.getAllModelsWithPlaylistId(playlistId);
+
+  for (const schedule of schedules) {
+    await sendNewScheduleToScreen(schedule.screenId);
+  }
 };
