@@ -119,6 +119,7 @@ const screensValidationSchemas = {
   activate: {
     params: Joi.object().keys({
       organizationId: organizationAttributesConstraints.organization.id.required(),
+      screenId: screensAttributesConstraints.screen.id.required(),
     }),
     body: Joi.object().keys({
       code: Joi.string().required(),

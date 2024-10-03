@@ -53,7 +53,7 @@ const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPl
     },
   }, controller.deleteByIdForOrganization);
 
-  fastify.post('organizations/:organizationId/screens/activate', {
+  fastify.post('organizations/:organizationId/screens/:screenId/activate', {
     preHandler: organizationsRoleAccessControlHook([ORGANIZATION_ROLES.OWNER, ORGANIZATION_ROLES.ADMIN]),
     schema: {
       params: screensValidationSchemas.activate.params,

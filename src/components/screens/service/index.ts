@@ -81,7 +81,7 @@ class ScreensService {
     await screensRepository.delete(screenId);
   }
 
-  async activate(code: string) {
+  async activate(screenId: ScreenId, code: string) {
     const connection = connectionsManager.unauthorizedConnections.get(code);
 
     if (!connection) {
@@ -92,7 +92,9 @@ class ScreensService {
       throw new Errors.InternalError(screensErrors.clientIdMissing({ code }));
     }
 
-    await sendAuthSuccess(connection, connection.clientId, { screenId: code });
+    await screensRepository.update(screenId, { deviceId: screenId });
+
+    await sendAuthSuccess(connection, connection.clientId, { screenId });
   }
 }
 

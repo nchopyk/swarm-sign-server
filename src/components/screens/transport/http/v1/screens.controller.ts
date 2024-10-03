@@ -57,9 +57,9 @@ export class ScreensController {
   };
 
   activate = async (req, res) => {
-    const { code } = req.body;
+    const { code, screenId } = req.body;
 
-    await screenService.activate(code);
+    await screenService.activate(screenId, code);
 
     return res.status(200).send({ message: 'Screen activated successfully.' });
   };

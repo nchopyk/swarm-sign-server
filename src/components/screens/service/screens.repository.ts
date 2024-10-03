@@ -72,6 +72,14 @@ export class ScreensRepository {
       .first();
   }
 
+  async getModelByDeviceId(deviceId: string, trx?: Knex.Transaction): Promise<ScreenModel | null> {
+    return (trx || this.postgresClient)
+      .select(this.screenModelToTableColumnMap)
+      .from('screens')
+      .where('device_id', deviceId)
+      .first();
+  }
+
   async getDTOByIdForOrganization({ screenId, organizationId }: GetDTOByIdForOrganizationFuncParams, trx?: Knex.Transaction): Promise<ScreenDTO | null> {
     const screenRows = await (trx || this.postgresClient)
       .select(this.screenDTOColumnMap)
