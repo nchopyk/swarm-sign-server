@@ -5,6 +5,7 @@ import mediasErrors from './medias.errors';
 import organizationsRepository from '../../organizations/service/organizations.repository';
 import organizationsErrors from '../../organizations/service/organizations.errors';
 import mediasRepository from './medias.repository';
+import playlistsRepository from '../../playlists/service/playlists.repository';
 import { convertContentKeyToUrl, getImageProperties, getVideoProperties } from './medias.utils';
 import { MEDIA_TYPES } from './media.constants';
 import { STATIC_FOLDER_PATH } from '../../../config';
@@ -118,6 +119,12 @@ class MediasService {
 
     if (!media) {
       throw new Errors.NotFoundError(mediasErrors.withSuchIdNotFound({ mediaId }));
+    }
+
+    const playlistsMedias = await playlistsRepository.getAllPlaylistsMediasModelsByMediaId(mediaId);
+
+    if (playlistsMedias.length) {
+      throw new Errors.BadRequest(mediasErrors.mediaIsUsedInPlaylists({ mediaId }));
     }
 
     await mediasRepository.delete(mediaId);

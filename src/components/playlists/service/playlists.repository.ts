@@ -149,6 +149,13 @@ export class PlaylistsRepository {
     return rows.map((row) => this.toPlaylistMediaDTO(row));
   }
 
+  async getAllPlaylistsMediasModelsByMediaId(mediaId: string): Promise<PlaylistMediaModel[]> {
+    return this.postgresClient
+      .select(this.playlistMediaModelToTableColumnMap)
+      .from('playlists_medias')
+      .where('media_id', mediaId);
+  }
+
   async update(playlistId: PlaylistId, fieldsToUpdate: PlaylistRepositoryUpdatableAttributes, trx?: Knex.Transaction): Promise<void> {
     const columns = convertFieldsToColumns(fieldsToUpdate, this.playlistModelToTableColumnMap);
 

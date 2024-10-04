@@ -30,6 +30,12 @@ const mediasErrors = {
     errorType: 'medias.noFieldsProvided',
     message: 'No fields provided in multipart/form-data',
   }),
+
+  mediaIsUsedInPlaylists: (context: { mediaId: MediaId }): ApiError => ({
+    errorType: 'medias.mediaIsUsedInPlaylists',
+    message: `Media with id=${context.mediaId} is used in playlists`,
+    context
+  }),
 };
 
 
