@@ -7,22 +7,22 @@ import schedulesBuilder from '../../service/schedules.builder';
 import schedulesRepository from '../../service/schedules.repository';
 
 export const sendNewScheduleToScreen = async (screenId: ScreenId) => {
-  const screen = await screensRepository.getModelByDeviceId(screenId);
+  const screen = await screensRepository.getModelById(screenId);
 
   if (!screen) {
-    logger.warn(`screen with clientId ${screenId} not found`, { tag: `WS_TRANSPORT | SCHEDULES | CLIENT:${screenId}` });
+    logger.warn(`screen with id="${screenId}" not found`, { tag: `WS_TRANSPORT | SCHEDULES | CLIENT:${screenId}` });
     return;
   }
 
   if (!screen.deviceId) {
-    logger.warn(`screen with clientId ${screenId} has no deviceId`, { tag: `WS_TRANSPORT | SCHEDULES | CLIENT:${screenId}` });
+    logger.warn(`screen with id="${screenId}" has no device linked`, { tag: `WS_TRANSPORT | SCHEDULES | CLIENT:${screenId}` });
     return;
   }
 
   const connection = connectionsManager.authorizedConnections.get(screen.deviceId);
 
   if (!connection) {
-    logger.warn(`screen with clientId ${screenId} not connected`, { tag: `WS_TRANSPORT | SCHEDULES | CLIENT:${screenId}` });
+    logger.warn(`no connected device for screen with id="${screenId}"`, { tag: `WS_TRANSPORT | SCHEDULES | CLIENT:${screenId}` });
     return;
   }
 

@@ -21,7 +21,7 @@ export const sendLoginSuccess = async (connection: ExtendedWebSocket, clientId: 
 };
 
 export const sendLoginFailed = async (connection: ExtendedWebSocket, clientId: string) => {
-  logger.info(`sending ${SERVER_EVENTS.LOGIN_SUCCESS} event`, { tag: `WS GATEWAY | SCREENS | CLIENT:${clientId}` });
+  logger.info(`sending ${SERVER_EVENTS.LOGIN_FAILED} event`, { tag: `WS GATEWAY | SCREENS | CLIENT:${clientId}` });
   return sendEvent({ connection, clientId, event: SERVER_EVENTS.LOGIN_FAILED, data: null });
 };
 

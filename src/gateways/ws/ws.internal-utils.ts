@@ -5,7 +5,7 @@ import { ExtendedWebSocket } from './ws.types';
 
 export const heartbeat = (ws) => {
   ws.isAlive = true;
-}
+};
 
 export const initHealthCheckInterval = (wss: WebSocketServer) => setInterval(() => {
   wss.clients.forEach((ws: ExtendedWebSocket): void => {

@@ -1,9 +1,10 @@
-import { ErrorEventPayload, EventHandler } from './screens.ws.types';
 import logger from '../../../../modules/logger';
 import connectionsManager from './connections-manager/index';
 import screensRepository from '../../service/screens.repository';
 import { sendAuthCode, sendLoginFailed, sendLoginSuccess, sendSchedule } from './screens.ws.event-senders';
 import schedulesBuilder from '../../../schedules/service/schedules.builder';
+import { ErrorEventPayload, EventHandler } from './screens.ws.types';
+import { ScreenId } from '../../service/screens.types';
 
 
 const screenEventsHandlers: Record<string, EventHandler> = {
@@ -27,10 +28,18 @@ const screenEventsHandlers: Record<string, EventHandler> = {
       connectionsManager.unauthorizedConnections.delete(connection.authCode, connection);
     }
 
-    const screen = await screensRepository.getModelByDeviceId(clientId);
+    const { screenId } = data as { screenId: ScreenId };
+
+    const screen = await screensRepository.getModelById(screenId);
 
     if (!screen) {
-      logger.warn(`screen with clientId ${clientId} not found`, { tag: `WS_TRANSPORT | SCREENS | CLIENT:${clientId}` });
+      logger.warn(`screen with id="${clientId}" not found`, { tag: `WS_TRANSPORT | SCREENS | CLIENT:${clientId}` });
+      await sendLoginFailed(connection, clientId);
+      return;
+    }
+
+    if (screen.deviceId !== clientId) {
+      logger.warn(`screen with deviceId="${clientId}" not found`, { tag: `WS_TRANSPORT | SCREENS | CLIENT:${clientId}` });
       await sendLoginFailed(connection, clientId);
       return;
     }
