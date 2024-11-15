@@ -24,6 +24,8 @@ const schedulesValidationSchemas = {
       notes: schedulesAttributesConstraints.schedule.notes.allow(null),
       playlistId: playlistsAttributesConstraints.playlist.id.required(),
       screenId: screensAttributesConstraints.screen.id.required(),
+      start: schedulesAttributesConstraints.schedule.start.required(),
+      end: schedulesAttributesConstraints.schedule.end.required(),
     } satisfies Record<keyof Omit<ScheduleCreationAttributes, 'organizationId'>, Joi.Schema>),
   },
 
@@ -49,6 +51,15 @@ const schedulesValidationSchemas = {
         notes: {
           validator: schedulesAttributesConstraints.schedule.notes,
           allowedOperations: stringOperations,
+        },
+
+        start: {
+          validator: schedulesAttributesConstraints.schedule.start,
+          allowedOperations: dateOperations,
+        },
+        end: {
+          validator: schedulesAttributesConstraints.schedule.end,
+          allowedOperations: dateOperations,
         },
 
         createdAt: {
@@ -170,6 +181,8 @@ const schedulesValidationSchemas = {
       notes: schedulesAttributesConstraints.schedule.notes,
       playlistId: playlistsAttributesConstraints.playlist.id,
       screenId: screensAttributesConstraints.screen.id,
+      start: schedulesAttributesConstraints.schedule.start,
+      end: schedulesAttributesConstraints.schedule.end,
     } satisfies Record<keyof ScheduleServiceUpdatableAttributes, Joi.Schema>),
   },
 

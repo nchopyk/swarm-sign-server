@@ -27,6 +27,8 @@ export class SchedulesRepository {
     organizationId: 'organization_id',
     name: 'name',
     notes: 'notes',
+    start: 'start',
+    end: 'end',
     screenId: 'screen_id',
     playlistId: 'playlist_id',
     createdAt: 'created_at',

@@ -6,7 +6,7 @@ import { CollectionOptions } from '../../../../general/general.types';
 export class SchedulesController {
   create = async (req, res) => {
     const { organizationId } = req.params;
-    const { name, notes, screenId, playlistId } = req.body;
+    const { name, notes, start, end, screenId, playlistId } = req.body;
 
     const newVehicleData: ScheduleCreationAttributes = {
       organizationId,
@@ -14,6 +14,8 @@ export class SchedulesController {
       playlistId,
       name,
       notes,
+      start,
+      end,
     };
 
     const schedule = await scheduleService.create(newVehicleData);
@@ -41,9 +43,9 @@ export class SchedulesController {
 
   updateByIdForOrganization = async (req, res) => {
     const { organizationId, scheduleId } = req.params;
-    const { name, notes, screenId, playlistId } = req.body;
+    const { name, notes, screenId, playlistId, start, end } = req.body;
 
-    const fieldsToUpdate: ScheduleServiceUpdatableAttributes = { name, notes, screenId, playlistId };
+    const fieldsToUpdate: ScheduleServiceUpdatableAttributes = { name, notes, screenId, playlistId, start, end };
     const updatedSchedule = await scheduleService.updateByIdForOrganization({ organizationId, scheduleId, fieldsToUpdate });
 
     return res.status(200).send(updatedSchedule);

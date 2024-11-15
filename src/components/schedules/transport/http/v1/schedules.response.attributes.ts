@@ -6,6 +6,8 @@ export const schedule: ResponseAttributes<Omit<ScheduleModel, 'organizationId' |
   id: { type: 'string' },
   name: { type: 'string' },
   notes: { type: 'string', nullable: true },
+  start: { type: 'string', format: 'date-time' },
+  end: { type: 'string', format: 'date-time' },
   createdAt: { type: 'string', format: 'date-time' },
   updatedAt: { type: 'string', format: 'date-time' },
 };

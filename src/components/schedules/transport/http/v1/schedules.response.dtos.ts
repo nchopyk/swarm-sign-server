@@ -11,6 +11,8 @@ const detailedDTO = {
     id: schedulesResponseAttributes.schedule.id,
     name: schedulesResponseAttributes.schedule.name,
     notes: schedulesResponseAttributes.schedule.notes,
+    start: schedulesResponseAttributes.schedule.start,
+    end: schedulesResponseAttributes.schedule.end,
     createdAt: schedulesResponseAttributes.schedule.createdAt,
     updatedAt: schedulesResponseAttributes.schedule.updatedAt,
     organization: organizationsResponseDtos.shortDTO,

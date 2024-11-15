@@ -17,6 +17,8 @@ export interface ScheduleModel {
   screenId: ScheduleId;
   playlistId: ScheduleId;
   name: ScheduleName;
+  start: Date;
+  end: Date;
   notes: ScheduleNotes;
   createdAt: ScheduleCreatedAt;
   updatedAt: ScheduleUpdatedAt;
