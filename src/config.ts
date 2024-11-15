@@ -38,7 +38,7 @@ export const JWT_CONFIG = {
   PASSWORD_RECOVERY_EXPIRES_IN: '1h',
 };
 
-export const MAX_FILE_SIZE = 50 * 1024 * 1024;
+export const MAX_FILE_SIZE = 550 * 1024 * 1024;
 export const STATIC_FOLDER_PATH = path.join(process.cwd(), 'static');
 
 
