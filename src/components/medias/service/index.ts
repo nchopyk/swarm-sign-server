@@ -6,9 +6,9 @@ import organizationsRepository from '../../organizations/service/organizations.r
 import organizationsErrors from '../../organizations/service/organizations.errors';
 import mediasRepository from './medias.repository';
 import playlistsRepository from '../../playlists/service/playlists.repository';
-import { convertContentKeyToUrl, getImageProperties, getVideoProperties } from './medias.utils';
 import { MEDIA_TYPES } from './media.constants';
 import { STATIC_FOLDER_PATH } from '../../../config';
+import { convertContentKeyToUrl, getImageProperties, getVideoProperties, createVideoThumbnail, createImageThumbnail } from './medias.utils';
 import { OrganizationId } from '../../organizations/service/organizations.types';
 import { Collection, CollectionOptions } from '../../general/general.types';
 import {
@@ -33,6 +33,16 @@ class MediasService {
 
     const fileKey = await this.saveFile(organizationId, mediaFile.filename, buffer);
 
+    const thumbnailCreatorProperties = {
+      sourcePath: path.join(STATIC_FOLDER_PATH, fileKey),
+      destinationFolder: STATIC_FOLDER_PATH,
+      filename: `${fileKey}-thumbnail.png`
+    };
+
+    const thumbnailFileKey = type === MEDIA_TYPES.VIDEO ?
+      await createVideoThumbnail(thumbnailCreatorProperties) :
+      await createImageThumbnail(thumbnailCreatorProperties);
+
     const mediaProperties = type === MEDIA_TYPES.VIDEO ? await getVideoProperties(path.join(STATIC_FOLDER_PATH, fileKey)) : await getImageProperties(buffer);
 
     const newMediaId = await mediasRepository.create({
@@ -41,6 +51,7 @@ class MediasService {
       notes,
       type,
       content: fileKey,
+      thumbnail: thumbnailFileKey,
       duration: mediaProperties.duration,
       width: mediaProperties.width,
       height: mediaProperties.height,
@@ -62,7 +73,11 @@ class MediasService {
     const medias = await mediasRepository.getDTOsCollectionForOrganization(organizationId, collectionOptions);
 
     return {
-      data: medias.map((media) => ({ ...media, content: convertContentKeyToUrl(media.content) })),
+      data: medias.map((media) => ({
+        ...media,
+        content: convertContentKeyToUrl(media.content),
+        thumbnail: convertContentKeyToUrl(media.thumbnail)
+      })),
     };
   }
 
@@ -76,6 +91,7 @@ class MediasService {
     return {
       ...media,
       content: convertContentKeyToUrl(media.content),
+      thumbnail: convertContentKeyToUrl(media.thumbnail)
     };
   }
 

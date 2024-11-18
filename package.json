@@ -44,6 +44,7 @@
     "@fastify/formbody": "^7.4.0",
     "@fastify/multipart": "^8.3.0",
     "@fastify/static": "^7.0.4",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@ffprobe-installer/ffprobe": "^2.1.2",
     "@tsconfig/node18": "^18.2.2",
     "@types/node": "^20.10.7",

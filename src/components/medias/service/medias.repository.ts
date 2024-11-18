@@ -23,6 +23,7 @@ export class MediasRepository {
     name: 'name',
     notes: 'notes',
     content: 'content',
+    thumbnail: 'thumbnail',
     type: 'type',
     duration: 'duration',
     width: 'width',

@@ -55,6 +55,10 @@ const mediasValidationSchemas = {
           validator: mediasAttributesConstraints.media.content,
           allowedOperations: stringOperations,
         },
+        thumbnail: {
+          validator: mediasAttributesConstraints.media.thumbnail,
+          allowedOperations: stringOperations,
+        },
         type: {
           validator: mediasAttributesConstraints.media.type,
           allowedOperations: stringOperations,

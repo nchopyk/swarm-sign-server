@@ -6,6 +6,7 @@ export type MediaId = string;
 export type MediaName = string;
 export type MediaNotes = string;
 export type MediaContent = string;
+export type MediaThumbnail = string;
 export type MediaDuration = number | null;
 export type MediaWidth = number | null;
 export type MediaHeight = number | null;
@@ -23,6 +24,7 @@ export interface MediaModel {
   name: MediaName;
   notes: MediaNotes;
   content: MediaContent;
+  thumbnail: MediaThumbnail;
   duration: MediaDuration;
   width: MediaWidth;
   height: MediaHeight;
@@ -62,6 +64,7 @@ export type MediaRepositoryUpdatableAttributes = Partial<Omit<MediaModel, 'id' |
 export interface MediaDTO extends Omit<MediaModel, 'organizationId'> {
   organization: OrganizationShortDTO;
 }
+
 export type MediaShortDTO = MediaModel;
 
 /* --------------------------------- Media DTOs --------------------------------- */

@@ -41,6 +41,8 @@ export const JWT_CONFIG = {
 export const MAX_FILE_SIZE = 550 * 1024 * 1024;
 export const STATIC_FOLDER_PATH = path.join(process.cwd(), 'static');
 
+export const IMAGE_THUMBNAILS_WIDTH = 500;
+
 
 export default {
   NODE_ENV,

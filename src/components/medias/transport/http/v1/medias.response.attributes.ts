@@ -7,6 +7,7 @@ export const media: ResponseAttributes<Omit<MediaModel, 'organizationId'>> = {
   name: { type: 'string' },
   notes: { type: 'string', nullable: true },
   content: { type: 'string' },
+  thumbnail: { type: 'string' },
   type: { type: 'string' },
   duration: { type: 'number', nullable: true },
   width: { type: 'number', nullable: true },

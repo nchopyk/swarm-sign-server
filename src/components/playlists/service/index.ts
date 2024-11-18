@@ -134,6 +134,7 @@ class PlaylistsService {
         media: {
           ...playlistMedia.media,
           content: convertContentKeyToUrl(playlistMedia.media.content),
+          thumbnail: convertContentKeyToUrl(playlistMedia.media.thumbnail),
         },
       })),
     };

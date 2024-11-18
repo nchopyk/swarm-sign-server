@@ -10,6 +10,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('name').notNullable();
     table.string('notes', 1000);
     table.string('content').notNullable();
+    table.string('thumbnail').notNullable();
     table.enum('type', Object.values(MEDIA_TYPES), { useNative: true, enumName: 'media_type_enum', }).notNullable();
 
     table.float('duration');
