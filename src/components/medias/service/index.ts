@@ -115,9 +115,9 @@ class MediasService {
       fieldsToUpdate['height'] = mediaProperties.height;
       fieldsToUpdate['mimeType'] = fieldsToUpdate.mediaFile.mimetype;
       fieldsToUpdate['size'] = fieldsToUpdate.mediaFile.size;
-
-      delete fieldsToUpdate.mediaFile;
     }
+
+    delete fieldsToUpdate.mediaFile;
 
     await mediasRepository.update(mediaId, fieldsToUpdate);
 
