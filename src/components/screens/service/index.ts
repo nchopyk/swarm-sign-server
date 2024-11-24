@@ -1,7 +1,7 @@
 import connectionsManager from '../transport/ws/connections-manager';
 import Errors from '../../../errors';
 import screensErrors from './screens.errors';
-import { sendAuthSuccess } from '../transport/ws/screens.ws.event-senders';
+import { sendAuthSuccess, sendReset } from '../transport/ws/screens.ws.event-senders';
 import { GetScreenByIdFuncParams, ScreenCreationAttributes, ScreenDTO, ScreenId, UpdateByIdForOrganizationFuncParams } from './screens.types';
 import organizationsRepository from '../../organizations/service/organizations.repository';
 import organizationsErrors from '../../organizations/service/organizations.errors';
@@ -101,6 +101,26 @@ class ScreensService {
     await screensRepository.update(screenId, { deviceId: connection.clientId });
 
     await sendAuthSuccess(connection, connection.clientId, { screenId });
+  }
+
+  async deactivate(screenId: ScreenId) {
+    const screen = await screensRepository.getModelById(screenId);
+
+    if (!screen) {
+      throw new Errors.NotFoundError(screensErrors.withSuchIdNotFound({ screenId }));
+    }
+
+    if (!screen.deviceId) {
+      throw new Errors.BadRequest(screensErrors.screenIsNotActivated({ screenId }));
+    }
+
+    const connection = connectionsManager.authorizedConnections.get(screen.deviceId);
+
+    if (connection) {
+      await sendReset(connection, screen.deviceId);
+    }
+
+    await screensRepository.update(screenId, { deviceId: null });
   }
 }
 

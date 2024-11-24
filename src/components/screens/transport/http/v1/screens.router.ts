@@ -62,6 +62,13 @@ const router: FastifyPluginCallback = (fastify: FastifyInstance, opts: FastifyPl
     },
   }, controller.activate);
 
+  fastify.post('organizations/:organizationId/screens/:screenId/deactivate', {
+    preHandler: organizationsRoleAccessControlHook([ORGANIZATION_ROLES.OWNER, ORGANIZATION_ROLES.ADMIN]),
+    schema: {
+      params: screensValidationSchemas.deactivate.params,
+    },
+  }, controller.deactivate);
+
   done();
 };
 

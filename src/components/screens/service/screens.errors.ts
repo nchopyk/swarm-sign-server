@@ -16,7 +16,7 @@ const screensErrors = {
 
   notCreated: (context: { screenData: ScreenCreationAttributes }): ApiError => ({
     errorType: 'screens.notCreated',
-    message: `Screen was not created`,
+    message: 'Screen was not created',
     context
   }),
 
@@ -25,6 +25,12 @@ const screensErrors = {
     message: `Screen with id=${context.screenId} not found`,
     context
   }),
+
+  screenIsNotActivated: (context: { screenId: ScreenId }): ApiError => ({
+    errorType: 'screens.screenIsNotActivated',
+    message: `Screen with id=${context.screenId} is not activated`,
+    context
+  })
 };
 
 export default screensErrors;

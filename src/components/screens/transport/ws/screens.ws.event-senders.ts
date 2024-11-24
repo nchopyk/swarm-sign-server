@@ -10,6 +10,11 @@ export const sendAuthCode = async (connection: ExtendedWebSocket, clientId: stri
   return sendEvent({ connection, clientId, event: SERVER_EVENTS.AUTH_CODE, data });
 };
 
+export const sendReset = async (connection: ExtendedWebSocket, clientId: string) => {
+  logger.info(`sending ${SERVER_EVENTS.RESET} event`, { tag: `WS GATEWAY | SCREENS | CLIENT:${clientId}` });
+  return sendEvent({ connection, clientId, event: SERVER_EVENTS.RESET, data: null });
+};
+
 export const sendAuthSuccess = async (connection: ExtendedWebSocket, clientId: string, data: { screenId: string }) => {
   logger.info(`sending ${SERVER_EVENTS.AUTH_SUCCESS} event`, { tag: `WS GATEWAY | SCREENS | CLIENT:${clientId}` });
   return sendEvent({ connection, clientId, event: SERVER_EVENTS.AUTH_SUCCESS, data });

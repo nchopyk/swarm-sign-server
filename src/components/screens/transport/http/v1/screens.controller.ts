@@ -65,6 +65,14 @@ export class ScreensController {
     return res.status(200).send({ message: 'Screen activated successfully.' });
   };
 
+  deactivate = async (req, res) => {
+    const { screenId } = req.params;
+
+    await screenService.deactivate(screenId);
+
+    return res.status(200).send({ message: 'Screen deactivated successfully.' });
+  };
+
 
 }
 

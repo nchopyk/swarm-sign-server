@@ -125,6 +125,13 @@ const screensValidationSchemas = {
       code: Joi.string().required(),
     }),
   },
+
+  deactivate: {
+    params: Joi.object().keys({
+      organizationId: organizationAttributesConstraints.organization.id.required(),
+      screenId: screensAttributesConstraints.screen.id.required(),
+    }),
+  }
 };
 
 export default screensValidationSchemas;
