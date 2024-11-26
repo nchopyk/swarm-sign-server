@@ -118,6 +118,7 @@ class ScreensService {
 
     if (connection) {
       await sendReset(connection, screen.deviceId);
+      connectionsManager.authorizedConnections.delete(screen.deviceId, connection);
     }
 
     await screensRepository.update(screenId, { deviceId: null });

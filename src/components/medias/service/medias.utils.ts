@@ -8,7 +8,7 @@ import sharp from 'sharp';
 ffmpeg.setFfprobePath(ffprobeBin.path);
 ffmpeg.setFfmpegPath(ffmpegBin.path);
 
-const VIDEO_TIME_PERCENT_FOR_THUMBNAIL = 10;
+const VIDEO_TIME_PERCENT_FOR_THUMBNAIL = 20;
 
 export const convertContentKeyToUrl = (content: MediaContent): string => `${PUBLIC_SERVER_URL}/v1/static/${content}`;
 

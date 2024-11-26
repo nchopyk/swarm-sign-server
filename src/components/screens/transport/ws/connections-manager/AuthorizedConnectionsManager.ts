@@ -42,6 +42,7 @@ class AuthorizedConnectionsManager implements IConnectionManager {
 
     logger.info(`deleting authorized connection for client with id=${clientId}`, { tag: 'WS GATEWAY | SCREENS | CONNECTION MANAGER' });
 
+    connection.close();
     delete this.connections[clientId];
   }
 
